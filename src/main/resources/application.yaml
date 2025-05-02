@@ -6,6 +6,13 @@ spring:
     username: ${SPRING_DATASOURCE_USERNAME}
     password: ${SPRING_DATASOURCE_PASSWORD}
     driver-class-name: org.postgresql.Driver
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: ${FIREBASE_ISSUER}
+          jwk-set-uri: ${FIREBASE_JWK_URI}
+          audiences: ${FIREBASE_AUDIENCE}
   sql:
     init:
       mode: never # change this for production
