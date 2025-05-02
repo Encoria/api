@@ -1,3 +1,16 @@
 spring:
   application:
     name: api
+  datasource:
+    url: ${SPRING_DATASOURCE_URL}
+    username: ${SPRING_DATASOURCE_USERNAME}
+    password: ${SPRING_DATASOURCE_PASSWORD}
+    driver-class-name: org.postgresql.Driver
+  sql:
+    init:
+      mode: never # change this for production
+  jpa:
+    hibernate:
+      ddl-auto: update # switch to "none" for production
+server:
+  port: 8080

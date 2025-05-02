@@ -1,0 +1,9 @@
+**/.git
+**/.gitattributes
+**/.gitignore
+
+.idea
+
+**/.env
+**/.example.env
+**.md
