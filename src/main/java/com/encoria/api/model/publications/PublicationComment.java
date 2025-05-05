@@ -41,7 +41,7 @@ public class PublicationComment {
     private Publication publication;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "status_id", nullable = false)
+    @JoinColumn(name = "status_id")
     private ModerationStatus status;
 
     @PrePersist
