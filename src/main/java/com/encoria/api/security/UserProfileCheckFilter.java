@@ -26,7 +26,7 @@ public class UserProfileCheckFilter extends OncePerRequestFilter {
 
     private static final AntPathMatcher pathMatcher = new AntPathMatcher();
     private static final Set<String> PROFILE_CREATION_PATTERNS = Set.of(
-            "/api/profile",
+            "/api/profile/onboard",
             "/api/profile/check-username"
     );
 

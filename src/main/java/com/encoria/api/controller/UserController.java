@@ -18,7 +18,7 @@ public class UserController {
 
     private final UserService userService;
 
-    @PostMapping
+    @PostMapping("/onboard")
     public ResponseEntity<UserProfileDto> createProfile(@AuthenticationPrincipal Jwt jwt,
                                                         @Valid @RequestBody CreateUserProfileDto userProfileDto) {
         return new ResponseEntity<>(
