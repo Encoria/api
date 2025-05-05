@@ -15,9 +15,9 @@ spring:
           audiences: ${FIREBASE_AUDIENCE}
   sql:
     init:
-      mode: never # change this for production
+      mode: always # change this for production
   jpa:
     hibernate:
-      ddl-auto: update # switch to "none" for production
+      ddl-auto: none # switch to "none" for production
 server:
   port: 8080

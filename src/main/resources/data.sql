@@ -1,2 +1,267 @@
-INSERT INTO user_roles (code, name) SELECT 'ADMIN', 'Administrator' WHERE NOT EXISTS (SELECT 1 FROM user_roles WHERE code = 'ADMIN');
-INSERT INTO user_roles (code, name) SELECT 'USER', 'Normal user' WHERE NOT EXISTS (SELECT 1 FROM user_roles WHERE code = 'USER');
+
+INSERT INTO countries (code, name)
+VALUES ('ES', 'España') ON CONFLICT (code) DO NOTHING;
+
+INSERT INTO user_roles (code, name)
+VALUES ('USER', 'Usuario Normal'),
+       ('ADMIN', 'Administrador'),
+       ('MODERATOR', 'Moderador') ON CONFLICT (code) DO NOTHING;
+
+-- moderation_statuses
+INSERT INTO moderation_statuses (code, name, description)
+VALUES ('PENDING', 'Pendiente', 'Contenido esperando revisión'),
+       ('APPROVED', 'Aprobado', 'Contenido aprobado y visible'),
+       ('REJECTED', 'Rechazado', 'Contenido rechazado y no visible') ON CONFLICT (code) DO NOTHING;
+
+INSERT INTO users (external_auth_id, username, email, firstname, lastname, birthdate, picture_url, created_at,
+                   country_id, role_id, status_id)
+VALUES ('auth_user_esp_001', 'pablo_ruiz', 'pablo.ruiz@example.com', 'Pablo', 'Ruiz', '1992-05-20',
+        'http://example.com/pics/pablo_r.jpg', NOW() - INTERVAL '100 days', 1, 1, 2),
+       ('auth_user_esp_002', 'sofia_g88', 'sofia.garcia@example.com', 'Sofía', 'García', '1990-08-11', NULL,
+        NOW() - INTERVAL '95 days', 1, 1, 2),
+       ('auth_user_esp_003', 'carlos_mrtnz', 'carlos.martinez@example.com', 'Carlos', 'Martínez', '1996-03-01',
+        'http://example.com/pics/carlos_m.png', NOW() - INTERVAL '90 days', 1, 1, 2),
+       ('auth_user_esp_004', 'laura_lpz', 'laura.lopez@example.com', 'Laura', 'López', '1993-11-25', NULL,
+        NOW() - INTERVAL '85 days', 1, 1, 2),
+       ('auth_user_esp_005', 'david_sanchez', 'david.sanchez@example.com', 'David', 'Sánchez', '1978-06-14',
+        'http://example.com/pics/david_s.jpg', NOW() - INTERVAL '80 days', 1, 1, 2),
+       ('auth_user_esp_006', 'elena_fdez', 'elena.fernandez@example.com', 'Elena', 'Fernández', '1999-01-03', NULL,
+        NOW() - INTERVAL '75 days', 1, 1, 2),
+       ('auth_user_esp_007', 'javier_perez', 'javier.perez@example.com', 'Javier', 'Pérez', '1965-04-19',
+        'http://example.com/pics/javier_p.jpg', NOW() - INTERVAL '70 days', 1, 1, 2),
+       ('auth_user_esp_008', 'maria_rgz', 'maria.rodriguez@example.com', 'María', 'Rodríguez', '1991-09-07', NULL,
+        NOW() - INTERVAL '65 days', 1, 1, 2),
+       ('auth_user_esp_009', 'antonio_gomez', 'antonio.gomez@example.com', 'Antonio', 'Gómez', '1985-12-30',
+        'http://example.com/pics/antonio_g.png', NOW() - INTERVAL '60 days', 1, 1, 2),
+       ('auth_user_esp_010', 'ana_diaz', 'ana.diaz@example.com', 'Ana', 'Díaz', '1989-02-18', NULL,
+        NOW() - INTERVAL '55 days', 1, 1, 2),
+       ('auth_user_esp_011', 'miguel_moreno', 'miguel.moreno@example.com', 'Miguel', 'Moreno', '1994-07-22',
+        'http://example.com/pics/miguel_m.jpg', NOW() - INTERVAL '50 days', 1, 1, 2),
+       ('auth_user_esp_012', 'isabella_ruiz', 'isabella.ruiz@example.com', 'Isabella', 'Ruiz', '1997-10-05', NULL,
+        NOW() - INTERVAL '45 days', 1, 1, 2),
+       ('auth_user_esp_013', 'ricardo_alvarez', 'ricardo.alvarez@example.com', 'Ricardo', 'Álvarez', '1980-01-28',
+        'http://example.com/pics/ricardo_a.jpg', NOW() - INTERVAL '40 days', 1, 1, 2),
+       ('auth_user_esp_014', 'carmen_jmnz', 'carmen.jimenez@example.com', 'Carmen', 'Jiménez', '1995-04-04', NULL,
+        NOW() - INTERVAL '35 days', 1, 1, 2),
+       ('auth_user_esp_015', 'sergio_navarro', 'sergio.navarro@example.com', 'Sergio', 'Navarro', '1998-08-16',
+        'http://example.com/pics/sergio_n.png', NOW() - INTERVAL '30 days', 1, 1, 2);
+
+
+INSERT INTO user_settings (user_id)
+VALUES (1),
+       (2),
+       (3),
+       (4),
+       (5),
+       (6),
+       (7),
+       (8),
+       (9),
+       (10),
+       (11),
+       (12),
+       (13),
+       (14),
+       (15),
+       (16),
+       (17),
+       (18);
+
+
+
+INSERT INTO user_followers (user_id, follower_id, follows_since, approved)
+VALUES (1, 2, NOW() - INTERVAL '80 days', TRUE),
+       (2, 1, NOW() - INTERVAL '78 days', TRUE),
+       (3, 1, NOW() - INTERVAL '70 days', TRUE),
+       (4, 1, NOW() - INTERVAL '65 days', FALSE),
+       (1, 5, NOW() - INTERVAL '60 days', TRUE),
+       (5, 2, NOW() - INTERVAL '58 days', TRUE),
+       (6, 8, NOW() - INTERVAL '50 days', TRUE),
+       (8, 6, NOW() - INTERVAL '48 days', TRUE),
+       (11, 1, NOW() - INTERVAL '40 days', TRUE),
+       (11, 2, NOW() - INTERVAL '38 days', TRUE),
+       (15, 4, NOW() - INTERVAL '30 days', TRUE),
+       (4, 15, NOW() - INTERVAL '28 days', TRUE);
+
+INSERT INTO artists (spotify_id, artist_name, picture_url)
+VALUES ('spotify:artist:VetustaMorlaId', 'Vetusta Morla', 'http://example.com/artist_pics/vetusta.jpg'),
+       ('spotify:artist:RosaliaId', 'Rosalía', 'http://example.com/artist_pics/rosalia.jpg'),
+       ('spotify:artist:IzalId', 'Izal', 'http://example.com/artist_pics/izal.jpg'),
+       ('spotify:artist:CTanganaId', 'C. Tangana', 'http://example.com/artist_pics/ctangana.jpg'),
+       ('spotify:artist:EstopaId', 'Estopa', 'http://example.com/artist_pics/estopa.jpg'),
+       ('spotify:artist:MelendiId', 'Melendi', 'http://example.com/artist_pics/melendi.jpg'),
+       ('spotify:artist:AlejandroSanzId', 'Alejandro Sanz', 'http://example.com/artist_pics/sanz.jpg'),
+       ('spotify:artist:LaOrejaDeVanGoghId', 'La Oreja de Van Gogh', 'http://example.com/artist_pics/lodvg.jpg'),
+       ('spotify:artist:LoriMeyersId', 'Lori Meyers', 'http://example.com/artist_pics/lorimeyers.jpg'),
+       ('spotify:artist:LoveOfLesbianId', 'Love of Lesbian', 'http://example.com/artist_pics/loveoflesbian.jpg'),
+       ('spotify:artist:KaseOId', 'Kase.O', 'http://example.com/artist_pics/kaseo.jpg'),
+       ('spotify:artist:SilviaPerezCruzId', 'Sílvia Pérez Cruz', 'http://example.com/artist_pics/silviaperezcruz.jpg');
+
+
+
+INSERT INTO moments (title, description, latitude, longitude, date, created_at, user_id, status_id)
+VALUES ('Vetusta Morla en Madrid', 'Concierto de presentación de su nuevo álbum en el WiZink Center.', 40.4336, -3.6635,
+        '2024-11-15', NOW() - INTERVAL '60 days', 2, 2),                   -- sofia_g88
+       ('Rosalía - Motomami Tour Barcelona', 'El espectacular show de Rosalía en el Palau Sant Jordi.', 41.3648, 2.1525,
+        '2024-12-01', NOW() - INTERVAL '70 days', 1, 2),                   -- pablo_ruiz
+       ('Izal - Gira Despedida Sevilla', 'Últimos conciertos de Izal en el Auditorio Rocío Jurado.', 37.4008, -6.0088,
+        '2024-10-25', NOW() - INTERVAL '50 days', 3, 2),                   -- carlos_mrtnz
+       ('FIB Benicàssim 2024', 'Festival Internacional de Benicàssim. Varios días de música.', 40.0614, 0.1238,
+        '2024-07-18', NOW() - INTERVAL '100 days', 11, 2),                 -- miguel_moreno
+       ('C. Tangana en Bilbao', 'La gira de El Madrileño en el Bizkaia Arena BEC!', 43.2658, -2.9966, '2024-11-05',
+        NOW() - INTERVAL '40 days', 4, 2),                                 -- laura_lpz
+       ('Estopa - 25 Aniversario Madrid', 'Celebrando 25 años en el Estadio Metropolitano.', 40.4361, -3.5996,
+        '2024-12-10', NOW() - INTERVAL '80 days', 2, 2),                   -- sofia_g88
+       ('Primavera Sound Barcelona 2025', 'Uno de los festivales más importantes de Europa en el Parc del Fòrum.',
+        41.4131, 2.2205, '2025-05-29', NOW() - INTERVAL '150 days', 1, 2), -- pablo_ruiz
+       ('Melendi en Valencia', 'Concierto en la Ciudad de las Artes y las Ciencias.', 39.4631, -0.3539, '2024-11-20',
+        NOW() - INTERVAL '55 days', 5, 2),                                 -- david_sanchez
+       ('Alejandro Sanz en Málaga', 'Tour 2024 en el Palacio de Deportes Martín Carpena.', 36.7055, -4.4578,
+        '2024-12-05', NOW() - INTERVAL '65 days', 7, 2),                   -- javier_perez
+       ('La Oreja de Van Gogh Oviedo', 'Concierto en el Auditorio Príncipe Felipe.', 43.3603, -5.8447, '2024-10-30',
+        NOW() - INTERVAL '45 days', 10, 2),                                -- ana_diaz
+       ('Concierto Flamenco Cádiz', 'Una noche de arte flamenco en el Teatro Falla.', 36.5323, -6.2963, '2024-11-08',
+        NOW() - INTERVAL '35 days', 9, 2),                                 -- antonio_gomez
+       ('Noche Electrónica Razzmatazz', 'Sesión con DJ internacional en Sala Razzmatazz.', 41.4010, 2.1968,
+        '2024-10-18', NOW() - INTERVAL '20 days', 6, 2),                   -- elena_fdez
+       ('Jazz en Café Central Madrid', 'Jazz íntimo en un club clásico.', 40.4156, -3.7000, '2024-11-01',
+        NOW() - INTERVAL '25 days', 5, 2),                                 -- david_sanchez
+       ('Gira Rock Nacional La Riviera', 'Varias bandas de rock español en Sala La Riviera.', 40.4120, -3.7180,
+        '2024-11-22', NOW() - INTERVAL '40 days', 13, 2),                  -- ricardo_alvarez
+       ('Festival BBK Live 2024', 'Festival en Kobetamendi, Bilbao.', 43.2560, -2.9660, '2024-07-11',
+        NOW() - INTERVAL '90 days', 4, 2),                                 -- laura_lpz
+       ('Mad Cool Festival 2023', 'Festival de verano en Madrid.', 40.4050, -3.5800, '2023-07-06',
+        NOW() - INTERVAL '400 days', 2, 2),
+       ('Sonar Barcelona 2023', 'Festival de música avanzada y arte multimedia.', 41.3740, 2.1490, '2023-06-15',
+        NOW() - INTERVAL '420 days', 6, 2),
+       ('Concierto Local Pendiente', 'Descripción del concierto local.', 40.0, -3.0, '2025-01-20',
+        NOW() - INTERVAL '10 days', 1, 1);
+
+INSERT INTO moment_media (media_url, media_type, position, created_at, moment_id)
+VALUES ('http://example.com/media/vetusta_madrid_1.jpg', 'image', 1, NOW() - INTERVAL '58 days', 1),
+       ('http://example.com/media/vetusta_madrid_2.mp4', 'video', 2, NOW() - INTERVAL '57 days', 1),
+       ('http://example.com/media/rosalia_bcn_1.jpg', 'image', 1, NOW() - INTERVAL '68 days', 2),
+       ('http://example.com/media/izal_sevilla_1.jpg', 'image', 1, NOW() - INTERVAL '48 days', 3),
+       ('http://example.com/media/fib_2024_1.jpg', 'image', 1, NOW() - INTERVAL '98 days', 4),
+       ('http://example.com/media/fib_2024_stage.jpg', 'image', 2, NOW() - INTERVAL '97 days', 4),
+       ('http://example.com/media/ctangana_bilbao_1.jpg', 'image', 1, NOW() - INTERVAL '38 days', 5),
+       ('http://example.com/media/estopa_madrid_1.jpg', 'image', 1, NOW() - INTERVAL '78 days', 6),
+       ('http://example.com/media/ps_bcn_2025_announcement.jpg', 'image', 1, NOW() - INTERVAL '148 days', 7),
+       ('http://example.com/media/melendi_valencia_1.jpg', 'image', 1, NOW() - INTERVAL '53 days', 8),
+       ('http://example.com/media/sanz_malaga_1.jpg', 'image', 1, NOW() - INTERVAL '63 days', 9),
+       ('http://example.com/media/lodvg_oviedo_1.jpg', 'image', 1, NOW() - INTERVAL '43 days', 10),
+       ('http://example.com/media/flamenco_cadiz_1.jpg', 'image', 1, NOW() - INTERVAL '33 days', 11),
+       ('http://example.com/media/razzmatazz_bcn_1.jpg', 'image', 1, NOW() - INTERVAL '18 days', 12),
+       ('http://example.com/media/cafe_central_madrid_1.jpg', 'image', 1, NOW() - INTERVAL '23 days', 13),
+       ('http://example.com/media/lariviera_madrid_1.jpg', 'image', 1, NOW() - INTERVAL '38 days', 14),
+       ('http://example.com/media/bbklive_2024_1.jpg', 'image', 1, NOW() - INTERVAL '88 days', 15),
+       ('http://example.com/media/madcool_2023_recap.mp4', 'video', 1, NOW() - INTERVAL '350 days', 16),
+       ('http://example.com/media/sonar_2023_lights.jpg', 'image', 1, NOW() - INTERVAL '340 days', 17);
+
+
+INSERT INTO moment_artists (artist_id, moment_id)
+VALUES (1, 1),
+       (2, 2),
+       (3, 3),
+       (4, 5),
+       (5, 6),
+       (6, 8),
+       (7, 9),
+       (8, 10),
+       (1, 4),
+       (3, 4),
+       (9, 14),
+       (10, 14),
+       (4, 15),
+       (1, 15),
+       (11, 16),
+       (2, 16),
+       (12, 17);
+
+INSERT INTO publications (created_at, moment_id, user_id, status_id)
+VALUES (NOW() - INTERVAL '59 days', 1, 1, 2),
+       (NOW() - INTERVAL '69 days', 2, 2, 2),
+       (NOW() - INTERVAL '49 days', 3, 3, 2),
+       (NOW() - INTERVAL '99 days', 4, 11, 2),
+       (NOW() - INTERVAL '39 days', 5, 4, 2),
+       (NOW() - INTERVAL '79 days', 6, 2, 2),
+       (NOW() - INTERVAL '149 days', 7, 1, 2),
+       (NOW() - INTERVAL '54 days', 8, 5, 2),
+       (NOW() - INTERVAL '64 days', 9, 7, 2),
+       (NOW() - INTERVAL '44 days', 10, 10, 2),
+       (NOW() - INTERVAL '34 days', 11, 9, 2),
+       (NOW() - INTERVAL '19 days', 12, 6, 2),
+       (NOW() - INTERVAL '24 days', 13, 5, 2),
+       (NOW() - INTERVAL '39 days', 14, 13, 2),
+       (NOW() - INTERVAL '89 days', 15, 4, 2),
+       (NOW() - INTERVAL '360 days', 16, 4, 2);
+        (NOW()- INTERVAL '5 days', 18, 1, 1);
+
+INSERT INTO publication_comments (content, created_at, user_id, publication_id, status_id)
+VALUES ('¡Yo también voy! ¡Nos vemos allí!', NOW() - INTERVAL '57 days', 3, 1,
+        2), -- carlos_mrtnz comments on pablo_ruiz's post about Vetusta Morla
+       ('¡Qué envidia! Disfruta mucho.', NOW() - INTERVAL '56 days', 5, 1,
+        2), -- david_sanchez comments on pablo_ruiz's post about Vetusta Morla
+       ('El Palau Sant Jordi es increíble para conciertos.', NOW() - INTERVAL '67 days', 1, 2,
+        2), -- pablo_ruiz comments on sofia_g88's post about Rosalía
+       ('Su despedida será épica.', NOW() - INTERVAL '47 days', 13, 3,
+        2), -- ricardo_alvarez comments on carlos_mrtnz's post about Izal
+       ('¡El cartel del FIB es brutal este año!', NOW() - INTERVAL '95 days', 15, 4,
+        2), -- sergio_navarro comments on miguel_moreno's post about FIB
+       ('¿Ya tienes tu entrada?', NOW() - INTERVAL '94 days', 8, 4,
+        2), -- maria_rgz comments on miguel_moreno's post about FIB
+       ('El Madrileño en directo es una pasada.', NOW() - INTERVAL '37 days', 1, 5,
+        2), -- pablo_ruiz comments on laura_lpz's post about C. Tangana
+       ('25 años y siguen en forma.', NOW() - INTERVAL '75 days', 9, 6,
+        2), -- antonio_gomez comments on sofia_g88's post about Estopa
+       ('Soñando con el Primavera Sound...', NOW() - INTERVAL '140 days', 6, 7,
+        2), -- elena_fdez comments on pablo_ruiz's post about PS
+       ('Melendi nunca defrauda.', NOW() - INTERVAL '50 days', 10, 8,
+        2), -- ana_diaz comments on david_sanchez's post about Melendi
+       ('Su voz es única.', NOW() - INTERVAL '60 days', 14, 9,
+        2), -- carmen_jmnz comments on javier_perez's post about Sanz
+       ('¡Qué recuerdos con LODVG!', NOW() - INTERVAL '40 days', 3, 10,
+        2), -- carlos_mrtnz comments on ana_diaz's post about LODVG
+       ('El arte del flamenco en estado puro.', NOW() - INTERVAL '30 days', 7, 11,
+        2), -- javier_perez comments on antonio_gomez's post about Flamenco
+       ('Razzmatazz es siempre un acierto para la electrónica.', NOW() - INTERVAL '15 days', 12, 12,
+        2), -- isabella_ruiz comments on elena_fdez's post about Razzmatazz
+       ('El Café Central es un clásico.', NOW() - INTERVAL '20 days', 1, 13,
+        2), -- pablo_ruiz comments on david_sanchez's post about Jazz
+       ('Apoyando el rock nacional!', NOW() - INTERVAL '35 days', 4, 14,
+        2), -- laura_lpz comments on ricardo_alvarez's post about Rock Nacional
+       ('El BBK Live es mi festival favorito.', NOW() - INTERVAL '85 days', 15, 15,
+        2), -- sergio_navarro comments on laura_lpz's post about BBK Live
+       ('Mad Cool 2023 fue increíble, a pesar del calor.', NOW() - INTERVAL '340 days', 11, 16,
+        2), -- miguel_moreno comments on laura_lpz's post about Mad Cool
+       ('Este comentario está pendiente de moderación.', NOW() - INTERVAL '2 days', 2, 1, 1);
+    ('Este comentario fue rechazado.', NOW() - INTERVAL '3 days', 3, 2, 3);
+
+
+
+INSERT INTO publication_likes (user_id, publication_id, created_at)
+VALUES (2, 1, NOW() - INTERVAL '58 days'),
+       (3, 1, NOW() - INTERVAL '57 days'),
+       (1, 2, NOW() - INTERVAL '68 days'),
+       (4, 2, NOW() - INTERVAL '66 days'),
+       (1, 3, NOW() - INTERVAL '48 days'),
+       (2, 3, NOW() - INTERVAL '47 days'),
+       (5, 3, NOW() - INTERVAL '46 days'),
+       (1, 4, NOW() - INTERVAL '98 days'),
+       (2, 4, NOW() - INTERVAL '97 days'),
+       (3, 4, NOW() - INTERVAL '96 days'),
+       (4, 4, NOW() - INTERVAL '95 days'),
+       (11, 5, NOW() - INTERVAL '38 days'),
+       (13, 5, NOW() - INTERVAL '37 days'),
+       (1, 6, NOW() - INTERVAL '78 days'),
+       (3, 6, NOW() - INTERVAL '77 days'),
+       (5, 8, NOW() - INTERVAL '53 days'),
+       (10, 8, NOW() - INTERVAL '52 days'),
+       (14, 9, NOW() - INTERVAL '63 days'),
+       (3, 10, NOW() - INTERVAL '43 days'),
+       (1, 13, NOW() - INTERVAL '23 days'),
+       (4, 14, NOW() - INTERVAL '38 days'),
+       (15, 15, NOW() - INTERVAL '88 days'),
+       (4, 16, NOW() - INTERVAL '345 days'),
+       (11, 16, NOW() - INTERVAL '340 days');
+
