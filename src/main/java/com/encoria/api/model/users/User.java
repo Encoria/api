@@ -1,5 +1,6 @@
 package com.encoria.api.model.users;
 
+import com.encoria.api.model.ModerationStatus;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -42,6 +43,21 @@ public class User {
 
     private Instant updatedAt;
     private Instant deletedAt;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "country_id")
+    private Country country;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "role_id")
+    private UserRole role;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "status_id")
+    private ModerationStatus status;
+
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private UserSettings settings;
 
     @PrePersist
     public void prePersist() {
