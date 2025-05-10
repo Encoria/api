@@ -38,4 +38,10 @@ public class GlobalExceptionHandler {
     public Map<String, String> handleUserNotFound(UserNotFoundException ex) {
         return Map.of("message", ex.getMessage());
     }
+
+    @ExceptionHandler(MomentNotFoundException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public Map<String, String> handleMomentNotFound(MomentNotFoundException ex) {
+        return Map.of("message", ex.getMessage());
+    }
 }
