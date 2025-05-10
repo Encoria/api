@@ -8,7 +8,7 @@ import java.time.LocalDate;
 
 public record CreateUserProfileDto(
         @NotBlank
-        @Size(min = 3, max = 20)
+        @Size(min = 3, max = 25)
         @Pattern(regexp = "^\\w+$", message = "username can only contain letters, numbers, or underscores")
         String username,
 
@@ -24,5 +24,7 @@ public record CreateUserProfileDto(
         LocalDate birthdate,
 
         @Pattern(regexp = "^(https?://).+$", message = "pictureUrl must be a valid URL")
-        String pictureUrl) {
+        String pictureUrl,
+
+        String countryCode) {
 }

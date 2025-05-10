@@ -11,6 +11,7 @@ public record UserProfileDto(
         String lastname,
         LocalDate birthdate,
         String pictureUrl,
+        String countryCode,
         Long followerCount,
         Long followingCount,
         Long momentCount) {
@@ -24,6 +25,7 @@ public record UserProfileDto(
                 this.lastname,
                 this.birthdate,
                 this.pictureUrl,
+                this.countryCode,
                 followerCount,
                 followingCount,
                 momentCount);
