@@ -4,6 +4,7 @@ import com.encoria.api.dto.CreateUserProfileDto;
 import com.encoria.api.dto.UserProfileDto;
 import com.encoria.api.exception.UserNotFoundException;
 import com.encoria.api.exception.UsernameAlreadyExistsException;
+import com.encoria.api.mapper.UserMapper;
 import com.encoria.api.model.users.User;
 import com.encoria.api.repository.UserRepository;
 import jakarta.validation.Valid;
@@ -19,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class UserService {
 
     private final UserRepository userRepository;
+    private final UserMapper userMapper;
 
     public boolean userExistsByUsername(String username) {
         return userRepository.existsByUsername(username);
@@ -26,7 +28,7 @@ public class UserService {
 
     public UserProfileDto getUserProfile(Jwt jwt) {
         return userRepository.findByExternalAuthId(jwt.getSubject())
-                .map(this::toDto)
+                .map(userMapper::toDto)
                 .orElseThrow(() -> new UserNotFoundException("User not found"));
     }
 
@@ -35,31 +37,9 @@ public class UserService {
         if (userExistsByUsername(dto.username())) {
             throw new UsernameAlreadyExistsException("Username already exists");
         }
-        User saved = userRepository.save(toEntity(jwt, dto));
-        return toDto(saved);
+        User saved = userRepository.save(userMapper.toEntity(dto,jwt));
+        return userMapper.toDto(saved);
     }
 
-    private User toEntity(Jwt jwt, CreateUserProfileDto dto) {
-        return User.builder()
-                .externalAuthId(jwt.getSubject())
-                .email(jwt.getClaimAsString("email"))
-                .username(dto.username())
-                .firstname(dto.firstname())
-                .lastname(dto.lastname())
-                .birthdate(dto.birthdate())
-                .pictureUrl(dto.pictureUrl())
-                .build();
-    }
 
-    private UserProfileDto toDto(User user) {
-        return new UserProfileDto(
-                user.getUuid(),
-                user.getUsername(),
-                user.getEmail(),
-                user.getFirstname(),
-                user.getLastname(),
-                user.getBirthdate(),
-                user.getPictureUrl()
-        );
-    }
 }
