@@ -10,5 +10,22 @@ public record UserProfileDto(
         String firstname,
         String lastname,
         LocalDate birthdate,
-        String pictureUrl) {
+        String pictureUrl,
+        Long followerCount,
+        Long followingCount,
+        Long momentCount) {
+
+    public UserProfileDto withCounts(Long followerCount, Long followingCount, Long momentCount) {
+        return new UserProfileDto(
+                this.uuid,
+                this.username,
+                this.email,
+                this.firstname,
+                this.lastname,
+                this.birthdate,
+                this.pictureUrl,
+                followerCount,
+                followingCount,
+                momentCount);
+    }
 }

@@ -6,6 +6,8 @@ import com.encoria.api.exception.UserNotFoundException;
 import com.encoria.api.exception.UsernameAlreadyExistsException;
 import com.encoria.api.mapper.UserMapper;
 import com.encoria.api.model.users.User;
+import com.encoria.api.repository.MomentRepository;
+import com.encoria.api.repository.UserFollowerRepository;
 import com.encoria.api.repository.UserRepository;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -20,16 +22,24 @@ import org.springframework.transaction.annotation.Transactional;
 public class UserService {
 
     private final UserRepository userRepository;
+    private final UserFollowerRepository userFollowerRepository;
+    private final MomentRepository momentRepository;
     private final UserMapper userMapper;
 
     public boolean userExistsByUsername(String username) {
         return userRepository.existsByUsername(username);
     }
 
+    @Transactional
     public UserProfileDto getUserProfile(Jwt jwt) {
-        return userRepository.findByExternalAuthId(jwt.getSubject())
-                .map(userMapper::toDto)
+        User user = userRepository.findByExternalAuthId(jwt.getSubject())
                 .orElseThrow(() -> new UserNotFoundException("User not found"));
+
+        long followerCount = userFollowerRepository.countByUserId(user.getId());
+        long followingCount = userFollowerRepository.countByFollowerId(user.getId());
+        long momentCount = momentRepository.countByUserId(user.getId());
+
+        return userMapper.toDto(user).withCounts(followerCount, followingCount, momentCount);
     }
 
     @Transactional
