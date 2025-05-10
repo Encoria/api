@@ -97,7 +97,6 @@ CREATE TABLE IF NOT EXISTS moments (
 
 CREATE TABLE IF NOT EXISTS moment_media (
     id BIGSERIAL PRIMARY KEY,
-    uuid UUID NOT NULL UNIQUE,
     media_url TEXT NOT NULL,
     media_type media_type_enum NOT NULL,
     position INTEGER NOT NULL,
