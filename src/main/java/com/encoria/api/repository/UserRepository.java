@@ -10,4 +10,5 @@ import java.util.Optional;
 public interface UserRepository extends JpaRepository<User, Long> {
     Optional<User> findByExternalAuthId(String externalAuthId);
     boolean existsByUsername(String username);
+    boolean existsByExternalAuthId(String subject);
 }
