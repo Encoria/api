@@ -1,2 +1,12 @@
-- Ver paginación
--Ignorar campos en mapper
+- Daniel: GENERAL:
+            Investigar paginación de resultados o solucion equivalente
+
+- Irene: Ignorar campos en mapper
+
+- Daniel: REVISAR MOMENT CONTROLLER:
+            En moment controller, método PUT updateMoment(), añadir jwt como argumento para permitir la modificación
+            solo al usuario dueño del moment.
+
+- Daniel: data.sql:
+            Añadir lista más extensa de paises a data.sql utilizando la lista oficial de códigos:
+            https://en.wikipedia.org/wiki/List_of_ISO_3166_country_codes
