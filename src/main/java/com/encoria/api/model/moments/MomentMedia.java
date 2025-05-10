@@ -4,7 +4,6 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.Instant;
-import java.util.UUID;
 
 @Entity
 @Table(name = "moment_media")
@@ -18,9 +17,6 @@ public class MomentMedia {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
-    @Column(nullable = false, unique = true)
-    private UUID uuid;
 
     @Column(nullable = false)
     private String mediaUrl;
@@ -38,9 +34,6 @@ public class MomentMedia {
 
     @PrePersist
     public void prePersist() {
-        if (uuid == null) {
-            uuid = UUID.randomUUID();
-        }
         if (createdAt == null) {
             createdAt = Instant.now();
         }
