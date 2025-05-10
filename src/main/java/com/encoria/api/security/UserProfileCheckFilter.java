@@ -1,11 +1,15 @@
 package com.encoria.api.security;
 
+import com.encoria.api.exception.ErrorResponse;
 import com.encoria.api.repository.UserRepository;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.lang.NonNull;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -55,7 +59,15 @@ public class UserProfileCheckFilter extends OncePerRequestFilter {
         if (userRepository.findByExternalAuthId(jwt.getSubject()).isPresent()) {
             filterChain.doFilter(request, response);
         } else {
-            response.sendError(HttpServletResponse.SC_FORBIDDEN, "USER_PROFILE_REQUIRED");
+            ErrorResponse error = ErrorResponse.of(
+                    HttpStatus.FORBIDDEN,
+                    "USER_PROFILE_REQUIRED",
+                    request.getRequestURI()
+            );
+            response.setStatus(HttpStatus.FORBIDDEN.value());
+            response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+            response.setCharacterEncoding("UTF-8");
+            new ObjectMapper().writeValue(response.getWriter(), error);
         }
     }
 }
