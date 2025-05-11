@@ -55,7 +55,7 @@ jobs:
           username: ${{ secrets.EC2_USERNAME }}
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
-            cd /api
+            cd api
             
             cat > .env << EOF
             # Database config
