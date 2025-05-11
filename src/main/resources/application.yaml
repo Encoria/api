@@ -1,6 +1,8 @@
 spring:
   application:
     name: api
+  flyway:
+    enabled: true
   datasource:
     url: ${SPRING_DATASOURCE_URL}
     username: ${SPRING_DATASOURCE_USERNAME}
@@ -13,11 +15,8 @@ spring:
           issuer-uri: ${FIREBASE_ISSUER}
           jwk-set-uri: ${FIREBASE_JWK_URI}
           audiences: ${FIREBASE_AUDIENCE}
-  sql:
-    init:
-      mode: always # change this for production
   jpa:
     hibernate:
-      ddl-auto: none # switch to "none" for production
+      ddl-auto: none
 server:
   port: 8080
