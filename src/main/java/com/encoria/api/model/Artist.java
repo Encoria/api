@@ -19,7 +19,7 @@ public class Artist {
     @Column(nullable = false, unique = true)
     private String spotifyId;
 
-    @Column(nullable = false)
+    @Column(name = "artist_name", nullable = false)
     private String name;
 
     private String pictureUrl;
