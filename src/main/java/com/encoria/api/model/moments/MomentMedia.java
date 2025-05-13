@@ -2,6 +2,8 @@ package com.encoria.api.model.moments;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.JdbcType;
+import org.hibernate.dialect.PostgreSQLEnumJdbcType;
 
 import java.time.Instant;
 
@@ -22,10 +24,15 @@ public class MomentMedia {
     private String mediaUrl;
 
     @Column(nullable = false)
-    @Enumerated(EnumType.STRING)
+    @Enumerated
+    @JdbcType(PostgreSQLEnumJdbcType.class)
     private MediaType mediaType;
 
     private Integer position;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "moment_id", nullable = false)
+    private Moment moment;
 
     @Column(nullable = false, updatable = false)
     private Instant createdAt;

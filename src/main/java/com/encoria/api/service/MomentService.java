@@ -5,12 +5,14 @@ import com.encoria.api.exception.MomentNotFoundException;
 import com.encoria.api.exception.UserNotFoundException;
 import com.encoria.api.mapper.MomentMapper;
 import com.encoria.api.mapper.MomentMediaMapper;
+import com.encoria.api.model.moments.MomentMedia;
 import com.encoria.api.model.users.User;
 import com.encoria.api.repository.MomentRepository;
 import com.encoria.api.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 import com.encoria.api.model.moments.Moment;
 import java.util.List;
@@ -37,16 +39,22 @@ public class MomentService {
                 .map(momentMapper::toDto).collect(Collectors.toList());
     }
 
-    public MomentDto createMoment(Jwt jwt, MomentDto momentDto) {
-        Optional<User> user = userRepository.findByExternalAuthId(jwt.getClaim("sub"));
-        if (user.isEmpty()) {
-            throw new UserNotFoundException("User not found");
+    @Transactional
+    public MomentDto createMoment(Jwt jwt, MomentDto dto) {
+        User user = userRepository.findByExternalAuthId(
+                jwt.getSubject()).orElseThrow(() -> new UserNotFoundException("User not found"));
+
+        Moment moment = momentMapper.toEntity(dto);
+        moment.setUser(user);
+
+        if (moment.getMedia() != null) {
+            for (MomentMedia media : moment.getMedia()) {
+                media.setMoment(moment);
+            }
         }
 
-        Moment moment = momentMapper.toEntity(momentDto);
-        moment.setUser(user.get());
-
-        return momentMapper.toDto(momentRepository.save(moment));
+        Moment saved = momentRepository.save(moment);
+        return momentMapper.toDto(saved);
     }
 
     public void deleteMoment(UUID uuid) {
