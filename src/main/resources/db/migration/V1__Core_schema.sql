@@ -5,7 +5,7 @@
 CREATE EXTENSION IF NOT EXISTS "pgcrypto";
 
 -- ENUM types
-CREATE TYPE media_type_enum AS ENUM ('image', 'video');
+CREATE TYPE media_type_enum AS ENUM ('IMAGE', 'VIDEO');
 
 -- Independent lookup tables
 CREATE TABLE countries (

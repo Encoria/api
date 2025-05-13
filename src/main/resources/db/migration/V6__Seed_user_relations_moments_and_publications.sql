@@ -63,25 +63,25 @@ ON CONFLICT (uuid) DO NOTHING;
 
 -- Moment Media
 INSERT INTO moment_media (media_url, media_type, position, created_at, moment_id)
-VALUES ('http://example.com/media/vetusta_madrid_1.jpg', 'image', 1, NOW() - INTERVAL '58 days', 1),
-       ('http://example.com/media/vetusta_madrid_2.mp4', 'video', 2, NOW() - INTERVAL '57 days', 1),
-       ('http://example.com/media/rosalia_bcn_1.jpg', 'image', 1, NOW() - INTERVAL '68 days', 2),
-       ('http://example.com/media/izal_sevilla_1.jpg', 'image', 1, NOW() - INTERVAL '48 days', 3),
-       ('http://example.com/media/fib_2024_1.jpg', 'image', 1, NOW() - INTERVAL '98 days', 4),
-       ('http://example.com/media/fib_2024_stage.jpg', 'image', 2, NOW() - INTERVAL '97 days', 4),
-       ('http://example.com/media/ctangana_bilbao_1.jpg', 'image', 1, NOW() - INTERVAL '38 days', 5),
-       ('http://example.com/media/estopa_madrid_1.jpg', 'image', 1, NOW() - INTERVAL '78 days', 6),
-       ('http://example.com/media/ps_bcn_2025_announcement.jpg', 'image', 1, NOW() - INTERVAL '148 days', 7),
-       ('http://example.com/media/melendi_valencia_1.jpg', 'image', 1, NOW() - INTERVAL '53 days', 8),
-       ('http://example.com/media/sanz_malaga_1.jpg', 'image', 1, NOW() - INTERVAL '63 days', 9),
-       ('http://example.com/media/lodvg_oviedo_1.jpg', 'image', 1, NOW() - INTERVAL '43 days', 10),
-       ('http://example.com/media/flamenco_cadiz_1.jpg', 'image', 1, NOW() - INTERVAL '33 days', 11),
-       ('http://example.com/media/razzmatazz_bcn_1.jpg', 'image', 1, NOW() - INTERVAL '18 days', 12),
-       ('http://example.com/media/cafe_central_madrid_1.jpg', 'image', 1, NOW() - INTERVAL '23 days', 13),
-       ('http://example.com/media/lariviera_madrid_1.jpg', 'image', 1, NOW() - INTERVAL '38 days', 14),
-       ('http://example.com/media/bbklive_2024_1.jpg', 'image', 1, NOW() - INTERVAL '88 days', 15),
-       ('http://example.com/media/madcool_2023_recap.mp4', 'video', 1, NOW() - INTERVAL '350 days', 16),
-       ('http://example.com/media/sonar_2023_lights.jpg', 'image', 1, NOW() - INTERVAL '340 days', 17)
+VALUES ('http://example.com/media/vetusta_madrid_1.jpg', 'IMAGE', 0, NOW() - INTERVAL '58 days', 1),
+       ('http://example.com/media/vetusta_madrid_2.mp4', 'VIDEO', 1, NOW() - INTERVAL '57 days', 1),
+       ('http://example.com/media/rosalia_bcn_1.jpg', 'IMAGE', 0, NOW() - INTERVAL '68 days', 2),
+       ('http://example.com/media/izal_sevilla_1.jpg', 'IMAGE', 0, NOW() - INTERVAL '48 days', 3),
+       ('http://example.com/media/fib_2024_1.jpg', 'IMAGE', 0, NOW() - INTERVAL '98 days', 4),
+       ('http://example.com/media/fib_2024_stage.jpg', 'IMAGE', 1, NOW() - INTERVAL '97 days', 4),
+       ('http://example.com/media/ctangana_bilbao_1.jpg', 'IMAGE', 0, NOW() - INTERVAL '38 days', 5),
+       ('http://example.com/media/estopa_madrid_1.jpg', 'IMAGE', 0, NOW() - INTERVAL '78 days', 6),
+       ('http://example.com/media/ps_bcn_2025_announcement.jpg', 'IMAGE', 0, NOW() - INTERVAL '148 days', 7),
+       ('http://example.com/media/melendi_valencia_1.jpg', 'IMAGE', 0, NOW() - INTERVAL '53 days', 8),
+       ('http://example.com/media/sanz_malaga_1.jpg', 'IMAGE', 0, NOW() - INTERVAL '63 days', 9),
+       ('http://example.com/media/lodvg_oviedo_1.jpg', 'IMAGE', 0, NOW() - INTERVAL '43 days', 10),
+       ('http://example.com/media/flamenco_cadiz_1.jpg', 'IMAGE', 0, NOW() - INTERVAL '33 days', 11),
+       ('http://example.com/media/razzmatazz_bcn_1.jpg', 'IMAGE', 0, NOW() - INTERVAL '18 days', 12),
+       ('http://example.com/media/cafe_central_madrid_1.jpg', 'IMAGE', 0, NOW() - INTERVAL '23 days', 13),
+       ('http://example.com/media/lariviera_madrid_1.jpg', 'IMAGE', 0, NOW() - INTERVAL '38 days', 14),
+       ('http://example.com/media/bbklive_2024_1.jpg', 'IMAGE', 0, NOW() - INTERVAL '88 days', 15),
+       ('http://example.com/media/madcool_2023_recap.mp4', 'VIDEO', 0, NOW() - INTERVAL '350 days', 16),
+       ('http://example.com/media/sonar_2023_lights.jpg', 'IMAGE', 0, NOW() - INTERVAL '340 days', 17)
 ON CONFLICT DO NOTHING;
 
 -- Moment Artists
