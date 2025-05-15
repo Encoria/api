@@ -2,13 +2,29 @@ package com.encoria.api.repository;
 
 import com.encoria.api.model.users.User;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
+import java.util.UUID;
 
 @Repository
 public interface UserRepository extends JpaRepository<User, Long> {
+
     Optional<User> findByExternalAuthId(String externalAuthId);
+
+    @Query("SELECT u.id FROM User u WHERE u.externalAuthId = :externalAuthId")
+    Optional<Long> findIdByExternalAuthId(@Param("externalAuthId") String externalAuthId);
+
+    @Query("SELECT u.id FROM User u WHERE u.uuid = :uuid")
+    Optional<Long> findIdByUuid(@Param("uuid") UUID uuid);
+
     boolean existsByUsername(String username);
+
     boolean existsByExternalAuthId(String subject);
+
+    @Query("SELECT u.settings.isPrivateProfile FROM User u WHERE u.id = :userId")
+    Boolean isPrivate(@Param("userId") Long userId);
+
 }
