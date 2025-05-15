@@ -67,6 +67,9 @@ public class User {
         if (createdAt == null) {
             createdAt = Instant.now();
         }
+        if (settings == null) {
+            settings = UserSettings.builder().user(this).build();
+        }
     }
 
     @PreUpdate

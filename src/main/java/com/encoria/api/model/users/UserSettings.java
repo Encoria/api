@@ -17,16 +17,35 @@ public class UserSettings {
     @Id
     private Long userId;
 
-    private boolean isPrivateProfile;
-    private boolean notifyComments;
-    private boolean notifyLikes;
-    private boolean notifyFollow;
+    private Boolean isPrivateProfile;
+    private Boolean notifyComments;
+    private Boolean notifyLikes;
+    private Boolean notifyFollow;
     private Instant updatedAt;
 
     @OneToOne
     @MapsId
     @JoinColumn(name = "user_id")
     private User user;
+
+    @PrePersist
+    public void prePersist() {
+        if (isPrivateProfile == null) {
+            isPrivateProfile = false;
+        }
+        if (notifyComments == null) {
+            notifyComments = true;
+        }
+        if (notifyLikes == null) {
+            notifyLikes = true;
+        }
+        if (notifyFollow == null) {
+            notifyFollow = true;
+        }
+        if (updatedAt == null) {
+            updatedAt = Instant.now();
+        }
+    }
 
     @PreUpdate
     public void preUpdate() {
