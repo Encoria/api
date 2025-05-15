@@ -1,5 +1,6 @@
 package com.encoria.api.model.users;
 
+import com.encoria.api.exception.FollowSelfException;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -27,15 +28,26 @@ public class UserFollower {
     @JoinColumn(name = "follower_id")
     private User follower;
 
-    @Column(nullable = false, updatable = false)
+    @Column(nullable = false)
     private Instant followsSince;
 
     @Column(nullable = false)
-    private boolean approved;
+    private Boolean approved;
 
     @PrePersist
     public void prePersist() {
+        if (this.id.getUserId().equals(this.id.getFollowerId())) {
+            throw new FollowSelfException();
+        }
         if (followsSince == null) {
+            followsSince = Instant.now();
+        }
+        approved = approved != null && approved;
+    }
+
+    @PreUpdate
+    public void preUpdate() {
+        if (approved) {
             followsSince = Instant.now();
         }
     }

@@ -21,6 +21,8 @@ CREATE TABLE user_followers (
 
     PRIMARY KEY (user_id, follower_id),
 
+    CONSTRAINT check_no_self_follow CHECK (user_id <> follower_id),
+
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
     FOREIGN KEY (follower_id) REFERENCES users(id) ON DELETE CASCADE
 );
