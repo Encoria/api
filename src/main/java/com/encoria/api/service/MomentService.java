@@ -6,6 +6,7 @@ import com.encoria.api.exception.MomentNotFoundException;
 import com.encoria.api.exception.ResourceOwnershipException;
 import com.encoria.api.exception.UserNotFoundException;
 import com.encoria.api.mapper.MomentMapper;
+import com.encoria.api.mapper.MomentMediaMapper;
 import com.encoria.api.model.moments.Moment;
 import com.encoria.api.model.moments.MomentMedia;
 import com.encoria.api.model.users.User;
@@ -27,6 +28,7 @@ public class MomentService {
     private final MomentRepository momentRepository;
     private final UserRepository userRepository;
     private final MomentMapper momentMapper;
+    private final MomentMediaMapper momentMediaMapper;
 
     public List<MomentResponse> getUserMoments(Jwt jwt) {
         Long userId = userRepository.findIdByExternalAuthId(
@@ -73,24 +75,34 @@ public class MomentService {
         momentRepository.deleteByUuid(uuid);
     }
 
-    public MomentResponse updateMoment(UUID uuid, MomentRequest momentRequest) {
-        Moment updatedMoment = momentMapper.toEntity(momentRequest);
-        Moment moment = momentRepository.findByUuid(uuid);
+    @Transactional
+    public MomentResponse updateMoment(Jwt jwt, UUID uuid, MomentRequest momentRequest) {
+        Long userId = userRepository.findIdByExternalAuthId(jwt.getSubject())
+                .orElseThrow(UserNotFoundException::new);
 
-        if (moment.getCreatedAt() == null) {
-            throw new MomentNotFoundException("Moment not found");
+        Moment existingMoment = momentRepository.findByUuid(uuid)
+                .orElseThrow(() -> new MomentNotFoundException("Moment not found with UUID: " + uuid));
+
+        if (!existingMoment.getUser().getId().equals(userId)) {
+            throw new ResourceOwnershipException();
         }
 
-        moment.setTitle(updatedMoment.getTitle());
-        moment.setDescription(updatedMoment.getDescription());
-        moment.setLocation(updatedMoment.getLocation());
-        moment.setDate(updatedMoment.getDate());
-        moment.setMedia(updatedMoment.getMedia());
-        moment.setArtists(updatedMoment.getArtists());
+        momentMapper.updateMomentFromDto(momentRequest, existingMoment);
 
-        return momentMapper.toDto(moment);
+        existingMoment.getMedia().clear();
+        if (momentRequest.media() != null) {
+            List<MomentMedia> newMediaEntities = momentRequest.media().stream()
+                    .map(mediaDto -> {
+                        MomentMedia media = momentMediaMapper.toEntity(mediaDto);
+                        media.setMoment(existingMoment);
+                        return media;
+                    })
+                    .toList();
+            existingMoment.getMedia().addAll(newMediaEntities);
+        }
 
-
+        Moment updatedMoment = momentRepository.save(existingMoment);
+        return momentMapper.toDto(updatedMoment);
     }
 
 

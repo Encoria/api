@@ -4,6 +4,7 @@ package com.encoria.api.controller;
 import com.encoria.api.dto.MomentRequest;
 import com.encoria.api.dto.MomentResponse;
 import com.encoria.api.service.MomentService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -28,7 +29,7 @@ public class MomentController {
 
     @PostMapping
     public ResponseEntity<MomentResponse> createMoment(@AuthenticationPrincipal Jwt jwt,
-                                                       @RequestBody MomentRequest momentRequest) {
+                                                       @Valid @RequestBody MomentRequest momentRequest) {
         return new ResponseEntity<>(momentService.createMoment(jwt, momentRequest), HttpStatus.CREATED);
     }
 
@@ -40,9 +41,10 @@ public class MomentController {
     }
 
     @PutMapping("/{momentUuid}")
-    public ResponseEntity<MomentResponse> updateMoment(@PathVariable UUID momentUuid,
-                                                       @RequestBody MomentRequest momentRequest) {
-        return new ResponseEntity<>(momentService.updateMoment(momentUuid, momentRequest), HttpStatus.OK);
+    public ResponseEntity<MomentResponse> updateMoment(@AuthenticationPrincipal Jwt jwt,
+                                                       @PathVariable UUID momentUuid,
+                                                       @Valid @RequestBody MomentRequest momentRequest) {
+        return new ResponseEntity<>(momentService.updateMoment(jwt, momentUuid, momentRequest), HttpStatus.OK);
     }
 
 }
