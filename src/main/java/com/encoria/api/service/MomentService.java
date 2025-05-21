@@ -2,9 +2,11 @@ package com.encoria.api.service;
 
 import com.encoria.api.dto.MomentDto;
 import com.encoria.api.exception.MomentNotFoundException;
+import com.encoria.api.exception.ResourceOwnershipException;
 import com.encoria.api.exception.UserNotFoundException;
 import com.encoria.api.mapper.MomentMapper;
 import com.encoria.api.mapper.MomentMediaMapper;
+import com.encoria.api.model.moments.Moment;
 import com.encoria.api.model.moments.MomentMedia;
 import com.encoria.api.model.users.User;
 import com.encoria.api.repository.MomentRepository;
@@ -14,7 +16,7 @@ import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
-import com.encoria.api.model.moments.Moment;
+
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -29,7 +31,7 @@ public class MomentService {
     private final MomentMapper momentMapper;
     private final MomentMediaMapper momentMediaMapper;
 
-    public List<MomentDto> getUserMoments(Jwt jwt){
+    public List<MomentDto> getUserMoments(Jwt jwt) {
         Optional<User> user = userRepository.findByExternalAuthId(jwt.getClaim("sub"));
         if (user.isEmpty()) {
             throw new UserNotFoundException("User not found");
@@ -42,7 +44,7 @@ public class MomentService {
     @Transactional
     public MomentDto createMoment(Jwt jwt, MomentDto dto) {
         User user = userRepository.findByExternalAuthId(
-                jwt.getSubject()).orElseThrow(() -> new UserNotFoundException("User not found"));
+                jwt.getSubject()).orElseThrow(UserNotFoundException::new);
 
         Moment moment = momentMapper.toEntity(dto);
         moment.setUser(user);
@@ -57,19 +59,23 @@ public class MomentService {
         return momentMapper.toDto(saved);
     }
 
-    public void deleteMoment(UUID uuid) {
-        Moment moment = momentRepository.findByUuid(uuid);
-        if (moment.getCreatedAt() == null) {
-            throw new MomentNotFoundException("Moment not found");
+    @Transactional
+    public void deleteMoment(Jwt jwt, UUID uuid) {
+        Long userId = userRepository.findIdByExternalAuthId(jwt.getSubject()).orElseThrow(UserNotFoundException::new);
+
+        Boolean userIsOwner = momentRepository.existsByUuidAndUserId(uuid, userId);
+
+        if (Boolean.FALSE.equals(userIsOwner)) {
+            throw new ResourceOwnershipException();
         }
-        momentRepository.delete(moment);
+        momentRepository.deleteByUuid(uuid);
     }
 
     public MomentDto updateMoment(UUID uuid, MomentDto momentDto) {
         Moment updatedMoment = momentMapper.toEntity(momentDto);
         Moment moment = momentRepository.findByUuid(uuid);
 
-        if(moment.getCreatedAt() == null){
+        if (moment.getCreatedAt() == null) {
             throw new MomentNotFoundException("Moment not found");
         }
 

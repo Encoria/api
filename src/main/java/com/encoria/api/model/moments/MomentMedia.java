@@ -28,6 +28,7 @@ public class MomentMedia {
     @JdbcType(PostgreSQLEnumJdbcType.class)
     private MediaType mediaType;
 
+    @Column(nullable = false)
     private Integer position;
 
     @ManyToOne(fetch = FetchType.LAZY)

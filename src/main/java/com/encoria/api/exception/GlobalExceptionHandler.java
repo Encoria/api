@@ -57,7 +57,7 @@ public class GlobalExceptionHandler {
     }
 
     @ResponseStatus(HttpStatus.FORBIDDEN)
-    @ExceptionHandler({PrivateProfileException.class})
+    @ExceptionHandler({PrivateProfileException.class, ResourceOwnershipException.class})
     public ErrorResponse handleForbidden(Exception ex, HttpServletRequest request) {
         return ErrorResponse.of(HttpStatus.FORBIDDEN, ex.getMessage(), request.getRequestURI());
     }

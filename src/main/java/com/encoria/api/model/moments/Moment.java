@@ -49,8 +49,7 @@ public class Moment {
     @JoinColumn(name = "status_id")
     private ModerationStatus status;
 
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "moment_id")
+    @OneToMany(mappedBy = "moment", cascade = CascadeType.ALL, orphanRemoval = true)
     @OrderColumn(name = "position")
     private List<MomentMedia> media;
 
