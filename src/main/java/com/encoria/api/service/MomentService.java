@@ -6,7 +6,6 @@ import com.encoria.api.exception.MomentNotFoundException;
 import com.encoria.api.exception.ResourceOwnershipException;
 import com.encoria.api.exception.UserNotFoundException;
 import com.encoria.api.mapper.MomentMapper;
-import com.encoria.api.mapper.MomentMediaMapper;
 import com.encoria.api.model.moments.Moment;
 import com.encoria.api.model.moments.MomentMedia;
 import com.encoria.api.model.users.User;
@@ -19,9 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 @Service
 @Validated
@@ -30,16 +27,13 @@ public class MomentService {
     private final MomentRepository momentRepository;
     private final UserRepository userRepository;
     private final MomentMapper momentMapper;
-    private final MomentMediaMapper momentMediaMapper;
 
     public List<MomentResponse> getUserMoments(Jwt jwt) {
-        Optional<User> user = userRepository.findByExternalAuthId(jwt.getClaim("sub"));
-        if (user.isEmpty()) {
-            throw new UserNotFoundException("User not found");
-        }
-        Long userId = user.get().getId();
+        Long userId = userRepository.findIdByExternalAuthId(
+                jwt.getSubject()).orElseThrow(UserNotFoundException::new);
+
         return momentRepository.findAllByUserIdOrderByCreatedAt(userId).stream()
-                .map(momentMapper::toDto).collect(Collectors.toList());
+                .map(momentMapper::toDto).toList();
     }
 
     @Transactional
@@ -62,7 +56,14 @@ public class MomentService {
 
     @Transactional
     public void deleteMoment(Jwt jwt, UUID uuid) {
-        Long userId = userRepository.findIdByExternalAuthId(jwt.getSubject()).orElseThrow(UserNotFoundException::new);
+        Long userId = userRepository.findIdByExternalAuthId(
+                jwt.getSubject()).orElseThrow(UserNotFoundException::new);
+
+        Boolean momentExists = momentRepository.existsByUuid(uuid);
+
+        if (Boolean.FALSE.equals(momentExists)) {
+            throw new MomentNotFoundException("Moment not found with uuid: " + uuid);
+        }
 
         Boolean userIsOwner = momentRepository.existsByUuidAndUserId(uuid, userId);
 

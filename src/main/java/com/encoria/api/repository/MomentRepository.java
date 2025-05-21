@@ -11,9 +11,15 @@ import java.util.UUID;
 @Repository
 public interface MomentRepository extends JpaRepository<Moment, Long> {
     List<Moment> findAllByUserIdOrderByCreatedAt(Long userId);
+
     Moment findByUuid(UUID uuid);
+
     Optional<Long> countByUserId(Long userId);
+
+    Boolean existsByUuid(UUID uuid);
+
     Boolean existsByUuidAndUserId(UUID uuid, Long userId);
+
     void deleteByUuid(UUID uuid);
 
 }
