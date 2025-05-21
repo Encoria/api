@@ -1,6 +1,7 @@
 package com.encoria.api.service;
 
-import com.encoria.api.dto.MomentDto;
+import com.encoria.api.dto.MomentRequest;
+import com.encoria.api.dto.MomentResponse;
 import com.encoria.api.exception.MomentNotFoundException;
 import com.encoria.api.exception.ResourceOwnershipException;
 import com.encoria.api.exception.UserNotFoundException;
@@ -31,7 +32,7 @@ public class MomentService {
     private final MomentMapper momentMapper;
     private final MomentMediaMapper momentMediaMapper;
 
-    public List<MomentDto> getUserMoments(Jwt jwt) {
+    public List<MomentResponse> getUserMoments(Jwt jwt) {
         Optional<User> user = userRepository.findByExternalAuthId(jwt.getClaim("sub"));
         if (user.isEmpty()) {
             throw new UserNotFoundException("User not found");
@@ -42,11 +43,11 @@ public class MomentService {
     }
 
     @Transactional
-    public MomentDto createMoment(Jwt jwt, MomentDto dto) {
+    public MomentResponse createMoment(Jwt jwt, MomentRequest momentRequest) {
         User user = userRepository.findByExternalAuthId(
                 jwt.getSubject()).orElseThrow(UserNotFoundException::new);
 
-        Moment moment = momentMapper.toEntity(dto);
+        Moment moment = momentMapper.toEntity(momentRequest);
         moment.setUser(user);
 
         if (moment.getMedia() != null) {
@@ -71,8 +72,8 @@ public class MomentService {
         momentRepository.deleteByUuid(uuid);
     }
 
-    public MomentDto updateMoment(UUID uuid, MomentDto momentDto) {
-        Moment updatedMoment = momentMapper.toEntity(momentDto);
+    public MomentResponse updateMoment(UUID uuid, MomentRequest momentRequest) {
+        Moment updatedMoment = momentMapper.toEntity(momentRequest);
         Moment moment = momentRepository.findByUuid(uuid);
 
         if (moment.getCreatedAt() == null) {

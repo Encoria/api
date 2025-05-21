@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
-public record MomentDto(
+public record MomentResponse(
         UUID uuid,
         String title,
         String description,

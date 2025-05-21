@@ -1,8 +1,8 @@
 package com.encoria.api.service;
 
-import com.encoria.api.dto.CreateUserProfileDto;
-import com.encoria.api.dto.UserFollowerDto;
-import com.encoria.api.dto.UserProfileDto;
+import com.encoria.api.dto.UserProfileRequest;
+import com.encoria.api.dto.UserFollowerResponse;
+import com.encoria.api.dto.UserProfileResponse;
 import com.encoria.api.exception.*;
 import com.encoria.api.mapper.UserMapper;
 import com.encoria.api.model.users.Country;
@@ -39,7 +39,7 @@ public class UserService {
     }
 
     @Transactional
-    public UserProfileDto getUserProfile(Jwt jwt) {
+    public UserProfileResponse getUserProfile(Jwt jwt) {
         User user = userRepository.findByExternalAuthId(jwt.getSubject())
                 .orElseThrow(() -> new UserNotFoundException("User not found"));
 
@@ -51,7 +51,7 @@ public class UserService {
     }
 
     @Transactional
-    public UserProfileDto createUser(Jwt jwt, @Valid CreateUserProfileDto dto) {
+    public UserProfileResponse createUser(Jwt jwt, @Valid UserProfileRequest dto) {
 
         if (userRepository.existsByExternalAuthId(jwt.getSubject())) {
             throw new UserProfileAlreadyExistsException("Profile already exists for this user");
@@ -113,7 +113,7 @@ public class UserService {
     }
 
     @Transactional
-    public List<UserFollowerDto> getFollowers(Jwt jwt, UUID uuid) {
+    public List<UserFollowerResponse> getFollowers(Jwt jwt, UUID uuid) {
         Long userId = userRepository.findIdByExternalAuthId(jwt.getSubject())
                 .orElseThrow(UserNotFoundException::new);
 
@@ -124,7 +124,7 @@ public class UserService {
     }
 
     @Transactional
-    public List<UserFollowerDto> getFollowing(Jwt jwt, UUID uuid) {
+    public List<UserFollowerResponse> getFollowing(Jwt jwt, UUID uuid) {
         Long userId = userRepository.findIdByExternalAuthId(jwt.getSubject())
                 .orElseThrow(UserNotFoundException::new);
 

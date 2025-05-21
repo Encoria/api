@@ -3,7 +3,7 @@ package com.encoria.api.dto;
 import java.time.LocalDate;
 import java.util.UUID;
 
-public record UserProfileDto(
+public record UserProfileResponse(
         UUID uuid,
         String username,
         String email,
@@ -16,8 +16,8 @@ public record UserProfileDto(
         Long followingCount,
         Long momentCount) {
 
-    public UserProfileDto withCounts(Long followerCount, Long followingCount, Long momentCount) {
-        return new UserProfileDto(
+    public UserProfileResponse withCounts(Long followerCount, Long followingCount, Long momentCount) {
+        return new UserProfileResponse(
                 this.uuid,
                 this.username,
                 this.email,

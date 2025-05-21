@@ -1,7 +1,8 @@
 package com.encoria.api.controller;
 
 
-import com.encoria.api.dto.MomentDto;
+import com.encoria.api.dto.MomentRequest;
+import com.encoria.api.dto.MomentResponse;
 import com.encoria.api.service.MomentService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -21,16 +22,14 @@ public class MomentController {
     private final MomentService momentService;
 
     @GetMapping
-    public ResponseEntity<List<MomentDto>> getMoments(@AuthenticationPrincipal Jwt jwt){
+    public ResponseEntity<List<MomentResponse>> getMoments(@AuthenticationPrincipal Jwt jwt) {
         return new ResponseEntity<>(momentService.getUserMoments(jwt), HttpStatus.OK);
     }
-    
+
     @PostMapping
-    public ResponseEntity<MomentDto> createMoment(@AuthenticationPrincipal Jwt jwt,
-                                               @RequestBody MomentDto momentDto) {
-        return new ResponseEntity<>(
-                momentService.createMoment(jwt, momentDto)
-                ,HttpStatus.CREATED);
+    public ResponseEntity<MomentResponse> createMoment(@AuthenticationPrincipal Jwt jwt,
+                                                       @RequestBody MomentRequest momentRequest) {
+        return new ResponseEntity<>(momentService.createMoment(jwt, momentRequest), HttpStatus.CREATED);
     }
 
     @DeleteMapping("/{momentUuid}")
@@ -41,11 +40,9 @@ public class MomentController {
     }
 
     @PutMapping("/{momentUuid}")
-    public ResponseEntity<MomentDto> updateMoment(@PathVariable UUID momentUuid, @RequestBody MomentDto momentDto) {
-        return new ResponseEntity<>(
-                momentService.updateMoment(momentUuid,momentDto),
-                HttpStatus.OK
-        );
+    public ResponseEntity<MomentResponse> updateMoment(@PathVariable UUID momentUuid,
+                                                       @RequestBody MomentRequest momentRequest) {
+        return new ResponseEntity<>(momentService.updateMoment(momentUuid, momentRequest), HttpStatus.OK);
     }
 
 }

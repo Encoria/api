@@ -6,7 +6,7 @@ import jakarta.validation.constraints.Size;
 import jakarta.validation.constraints.NotBlank;
 import java.time.LocalDate;
 
-public record CreateUserProfileDto(
+public record UserProfileRequest(
         @NotBlank
         @Size(min = 3, max = 25)
         @Pattern(regexp = "^\\w+$", message = "username can only contain letters, numbers, or underscores")
