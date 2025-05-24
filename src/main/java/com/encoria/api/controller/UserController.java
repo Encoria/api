@@ -1,6 +1,7 @@
 package com.encoria.api.controller;
 
 import com.encoria.api.dto.UserFollowerResponse;
+import com.encoria.api.dto.UserItemResponse;
 import com.encoria.api.dto.UserProfileRequest;
 import com.encoria.api.dto.UserProfileResponse;
 import com.encoria.api.service.UserService;
@@ -102,6 +103,13 @@ public class UserController {
                                                                    @PathVariable UUID targetUuid) {
         return new ResponseEntity<>(
                 userService.getFollowing(jwt, targetUuid),
+                HttpStatus.OK);
+    }
+
+    @GetMapping("/search")
+    public ResponseEntity<List<UserItemResponse>> searchUsersByUsername(@RequestParam String username) {
+        return new ResponseEntity<>(
+                userService.searchUsers(username),
                 HttpStatus.OK);
     }
 }

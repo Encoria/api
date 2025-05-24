@@ -1,6 +1,7 @@
 package com.encoria.api.service;
 
 import com.encoria.api.dto.UserFollowerResponse;
+import com.encoria.api.dto.UserItemResponse;
 import com.encoria.api.dto.UserProfileRequest;
 import com.encoria.api.dto.UserProfileResponse;
 import com.encoria.api.exception.*;
@@ -204,5 +205,9 @@ public class UserService {
                 followRequest.getFollowsSince(),
                 true
         );
+    }
+
+    public List<UserItemResponse> searchUsers(String query) {
+        return userRepository.searchByUsername(query);
     }
 }
