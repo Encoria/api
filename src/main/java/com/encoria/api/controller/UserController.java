@@ -1,14 +1,13 @@
 package com.encoria.api.controller;
 
-import com.encoria.api.dto.UserProfileRequest;
 import com.encoria.api.dto.UserFollowerResponse;
+import com.encoria.api.dto.UserProfileRequest;
 import com.encoria.api.dto.UserProfileResponse;
 import com.encoria.api.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.lang.Nullable;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
@@ -33,7 +32,9 @@ public class UserController {
 
     @GetMapping
     public ResponseEntity<UserProfileResponse> getProfile(@AuthenticationPrincipal Jwt jwt) {
-        return new ResponseEntity<>(userService.getUserProfile(jwt), HttpStatus.OK);
+        return new ResponseEntity<>(
+                userService.getOwnProfile(jwt),
+                HttpStatus.OK);
     }
 
     @GetMapping("/check-username")
@@ -43,30 +44,64 @@ public class UserController {
                 HttpStatus.OK);
     }
 
-    @PostMapping("/follow")
-    public ResponseEntity<Void> followUser(@AuthenticationPrincipal Jwt jwt,
-                                           @RequestParam UUID uuid) {
-        userService.followUser(jwt, uuid);
-        return new ResponseEntity<>(HttpStatus.CREATED);
-    }
-
-    @DeleteMapping("/unfollow")
-    public ResponseEntity<Void> unfollowUser(@AuthenticationPrincipal Jwt jwt,
-                                             @RequestParam UUID uuid) {
-        userService.unfollowUser(jwt, uuid);
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-    }
-
     @GetMapping("/followers")
-    public ResponseEntity<List<UserFollowerResponse>> getFollowers(@AuthenticationPrincipal Jwt jwt,
-                                                                   @Nullable @RequestParam UUID uuid) {
-        return new ResponseEntity<>(userService.getFollowers(jwt, uuid), HttpStatus.OK);
+    public ResponseEntity<List<UserFollowerResponse>> getFollowers(@AuthenticationPrincipal Jwt jwt) {
+        return new ResponseEntity<>(
+                userService.getFollowers(jwt, null),
+                HttpStatus.OK);
     }
 
     @GetMapping("/following")
-    public ResponseEntity<List<UserFollowerResponse>> getFollowing(@AuthenticationPrincipal Jwt jwt,
-                                                                   @Nullable @RequestParam UUID uuid) {
-        return new ResponseEntity<>(userService.getFollowing(jwt, uuid), HttpStatus.OK);
+    public ResponseEntity<List<UserFollowerResponse>> getFollowing(@AuthenticationPrincipal Jwt jwt) {
+        return new ResponseEntity<>(
+                userService.getFollowing(jwt, null),
+                HttpStatus.OK);
     }
 
+    @PostMapping("/following")
+    public ResponseEntity<UserFollowerResponse> followUser(@AuthenticationPrincipal Jwt jwt,
+                                                           @RequestBody UUID targetUuid) {
+        return new ResponseEntity<>(
+                userService.followUser(jwt, targetUuid),
+                HttpStatus.CREATED);
+    }
+
+    @DeleteMapping("/following")
+    public ResponseEntity<Void> unfollowUser(@AuthenticationPrincipal Jwt jwt,
+                                             @RequestBody UUID targetUuid) {
+        userService.unfollowUser(jwt, targetUuid);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
+    @PostMapping("/following/approve")
+    public ResponseEntity<UserFollowerResponse> approveFollow(@AuthenticationPrincipal Jwt jwt,
+                                                              @RequestBody UUID followerUuid) {
+        return new ResponseEntity<>(
+                userService.approveFollow(jwt, followerUuid),
+                HttpStatus.OK);
+    }
+
+    @GetMapping("/{targetUuid}")
+    public ResponseEntity<UserProfileResponse> getProfile(@AuthenticationPrincipal Jwt jwt,
+                                                          @PathVariable UUID targetUuid) {
+        return new ResponseEntity<>(
+                userService.getUserProfile(jwt, targetUuid),
+                HttpStatus.OK);
+    }
+
+    @GetMapping("/followers/{targetUuid}")
+    public ResponseEntity<List<UserFollowerResponse>> getFollowers(@AuthenticationPrincipal Jwt jwt,
+                                                                   @PathVariable UUID targetUuid) {
+        return new ResponseEntity<>(
+                userService.getFollowers(jwt, targetUuid),
+                HttpStatus.OK);
+    }
+
+    @GetMapping("/following/{targetUuid}")
+    public ResponseEntity<List<UserFollowerResponse>> getFollowing(@AuthenticationPrincipal Jwt jwt,
+                                                                   @PathVariable UUID targetUuid) {
+        return new ResponseEntity<>(
+                userService.getFollowing(jwt, targetUuid),
+                HttpStatus.OK);
+    }
 }

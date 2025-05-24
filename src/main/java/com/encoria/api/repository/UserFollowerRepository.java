@@ -29,5 +29,7 @@ public interface UserFollowerRepository extends JpaRepository<UserFollower, User
             "WHERE uf.follower.id = :followerId")
     List<UserFollowerResponse> findByFollowerId(@Param("followerId") Long followerId);
 
+    boolean existsByUserIdAndFollowerIdAndApprovedIsTrue(Long userId, Long followerId);
+
     boolean existsByUserIdAndFollowerId(Long userId, Long followerId);
 }

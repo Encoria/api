@@ -12,6 +12,7 @@ public record UserProfileResponse(
         LocalDate birthdate,
         String pictureUrl,
         String countryCode,
+        Boolean approved,
         Long followerCount,
         Long followingCount,
         Long momentCount) {
@@ -26,6 +27,7 @@ public record UserProfileResponse(
                 this.birthdate,
                 this.pictureUrl,
                 this.countryCode,
+                this.approved,
                 followerCount,
                 followingCount,
                 momentCount);

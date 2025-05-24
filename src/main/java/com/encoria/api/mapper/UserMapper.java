@@ -11,7 +11,19 @@ import org.springframework.security.oauth2.jwt.Jwt;
 public interface UserMapper {
 
     @Mapping(target = "countryCode", expression = "java(user.getCountry() != null ? user.getCountry().getCode() : null)")
+    @Mapping(target ="approved", constant = "true" )
     UserProfileResponse toDto(User user);
+
+    @Mapping(target = "email", ignore = true)
+    @Mapping(target = "firstname", ignore = true)
+    @Mapping(target = "lastname", ignore = true)
+    @Mapping(target = "birthdate", ignore = true)
+    @Mapping(target = "countryCode", ignore = true)
+    @Mapping(target = "followerCount", ignore = true)
+    @Mapping(target = "followingCount", ignore = true)
+    @Mapping(target = "momentCount", ignore = true)
+    @Mapping(target ="approved", constant = "false" )
+    UserProfileResponse toReducedDto(User user);
 
     @Mapping(target = "externalAuthId", expression = "java(jwt.getSubject())")
     @Mapping(target = "email", expression = "java(jwt.getClaimAsString(\"email\"))")
