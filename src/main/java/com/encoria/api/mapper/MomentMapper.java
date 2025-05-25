@@ -32,7 +32,7 @@ public interface MomentMapper {
     @Mapping(target = "user", ignore = true)
     @Mapping(target = "status", ignore = true)
     @Mapping(target = "media", ignore = true)
-    @Mapping(target = "artists", ignore = true)
+    @Mapping(target = "artist", ignore = true)
     @Mapping(target = "location", expression = "java(toLocation(momentRequest.latitude(), momentRequest.longitude()))")
     void updateMomentFromDto(MomentRequest momentRequest, @MappingTarget Moment moment);
 

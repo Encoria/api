@@ -14,9 +14,6 @@ CREATE INDEX IF NOT EXISTS idx_moments_status_id ON moments(status_id);
 
 CREATE INDEX IF NOT EXISTS idx_moment_media_moment_id ON moment_media(moment_id);
 
-CREATE INDEX IF NOT EXISTS idx_moment_artists_moment_id ON moment_artists(moment_id);
-CREATE INDEX IF NOT EXISTS idx_moment_artists_artist_id ON moment_artists(artist_id);
-
 CREATE INDEX IF NOT EXISTS idx_publications_user_id ON publications(user_id);
 CREATE INDEX IF NOT EXISTS idx_publications_moment_id ON publications(moment_id);
 CREATE INDEX IF NOT EXISTS idx_publications_status_id ON publications(status_id);

@@ -2,7 +2,6 @@ package com.encoria.api.dto;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Set;
 import java.util.UUID;
 
 public record MomentResponse(
@@ -13,7 +12,7 @@ public record MomentResponse(
         Float longitude,
         LocalDate date,
         List<MomentMediaDto> media,
-        Set<ArtistDto> artists
+        ArtistDto artist
 ) {
 
 }

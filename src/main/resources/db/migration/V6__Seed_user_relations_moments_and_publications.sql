@@ -22,43 +22,43 @@ VALUES (1, 2, NOW() - INTERVAL '80 days', TRUE),
 ON CONFLICT (user_id, follower_id) DO NOTHING;
 
 -- Moments
-INSERT INTO moments (uuid, title, description, latitude, longitude, date, created_at, user_id, status_id)
+INSERT INTO moments (uuid, title, description, latitude, longitude, date, created_at, user_id, status_id, artist_id)
 VALUES (gen_random_uuid(), 'Vetusta Morla en Madrid', 'Concierto de presentación de su nuevo álbum en el WiZink Center.', 40.4336, -3.6635,
-        '2024-11-15', NOW() - INTERVAL '60 days', 2, 2),
+        '2024-11-15', NOW() - INTERVAL '60 days', 2, 2, 1),
        (gen_random_uuid(), 'Rosalía - Motomami Tour Barcelona', 'El espectacular show de Rosalía en el Palau Sant Jordi.', 41.3648, 2.1525,
-        '2024-12-01', NOW() - INTERVAL '70 days', 1, 2),
+        '2024-12-01', NOW() - INTERVAL '70 days', 1, 2, 2),
        (gen_random_uuid(), 'Izal - Gira Despedida Sevilla', 'Últimos conciertos de Izal en el Auditorio Rocío Jurado.', 37.4008, -6.0088,
-        '2024-10-25', NOW() - INTERVAL '50 days', 3, 2),
+        '2024-10-25', NOW() - INTERVAL '50 days', 3, 2, 3),
        (gen_random_uuid(), 'FIB Benicàssim 2024', 'Festival Internacional de Benicàssim. Varios días de música.', 40.0614, 0.1238,
-        '2024-07-18', NOW() - INTERVAL '100 days', 11, 2),
+        '2024-07-18', NOW() - INTERVAL '100 days', 11, 2, 4),
        (gen_random_uuid(), 'C. Tangana en Bilbao', 'La gira de El Madrileño en el Bizkaia Arena BEC!', 43.2658, -2.9966, '2024-11-05',
-        NOW() - INTERVAL '40 days', 4, 2),
+        NOW() - INTERVAL '40 days', 4, 2, 5),
        (gen_random_uuid(), 'Estopa - 25 Aniversario Madrid', 'Celebrando 25 años en el Estadio Metropolitano.', 40.4361, -3.5996,
-        '2024-12-10', NOW() - INTERVAL '80 days', 2, 2),
+        '2024-12-10', NOW() - INTERVAL '80 days', 2, 2, 6),
        (gen_random_uuid(), 'Primavera Sound Barcelona 2025', 'Uno de los festivales más importantes de Europa en el Parc del Fòrum.',
-        41.4131, 2.2205, '2025-05-29', NOW() - INTERVAL '150 days', 1, 2),
+        41.4131, 2.2205, '2025-05-29', NOW() - INTERVAL '150 days', 1, 2, 7),
        (gen_random_uuid(), 'Melendi en Valencia', 'Concierto en la Ciudad de las Artes y las Ciencias.', 39.4631, -0.3539, '2024-11-20',
-        NOW() - INTERVAL '55 days', 5, 2),
+        NOW() - INTERVAL '55 days', 5, 2, 8),
        (gen_random_uuid(), 'Alejandro Sanz en Málaga', 'Tour 2024 en el Palacio de Deportes Martín Carpena.', 36.7055, -4.4578,
-        '2024-12-05', NOW() - INTERVAL '65 days', 7, 2),
+        '2024-12-05', NOW() - INTERVAL '65 days', 7, 2, 9),
        (gen_random_uuid(), 'La Oreja de Van Gogh Oviedo', 'Concierto en el Auditorio Príncipe Felipe.', 43.3603, -5.8447, '2024-10-30',
-        NOW() - INTERVAL '45 days', 10, 2),
+        NOW() - INTERVAL '45 days', 10, 2, 10),
        (gen_random_uuid(), 'Concierto Flamenco Cádiz', 'Una noche de arte flamenco en el Teatro Falla.', 36.5323, -6.2963, '2024-11-08',
-        NOW() - INTERVAL '35 days', 9, 2),
+        NOW() - INTERVAL '35 days', 9, 2, 11),
        (gen_random_uuid(), 'Noche Electrónica Razzmatazz', 'Sesión con DJ internacional en Sala Razzmatazz.', 41.4010, 2.1968,
-        '2024-10-18', NOW() - INTERVAL '20 days', 6, 2),
+        '2024-10-18', NOW() - INTERVAL '20 days', 6, 2, 12),
        (gen_random_uuid(), 'Jazz en Café Central Madrid', 'Jazz íntimo en un club clásico.', 40.4156, -3.7000, '2024-11-01',
-        NOW() - INTERVAL '25 days', 5, 2),
+        NOW() - INTERVAL '25 days', 5, 2, 1),
        (gen_random_uuid(), 'Gira Rock Nacional La Riviera', 'Varias bandas de rock español en Sala La Riviera.', 40.4120, -3.7180,
-        '2024-11-22', NOW() - INTERVAL '40 days', 13, 2),
+        '2024-11-22', NOW() - INTERVAL '40 days', 13, 2, 3),
        (gen_random_uuid(), 'Festival BBK Live 2024', 'Festival en Kobetamendi, Bilbao.', 43.2560, -2.9660, '2024-07-11',
-        NOW() - INTERVAL '90 days', 4, 2),
+        NOW() - INTERVAL '90 days', 4, 2, 5),
        (gen_random_uuid(), 'Mad Cool Festival 2023', 'Festival de verano en Madrid.', 40.4050, -3.5800, '2023-07-06',
-        NOW() - INTERVAL '400 days', 2, 2),
+        NOW() - INTERVAL '400 days', 2, 2, 7),
        (gen_random_uuid(), 'Sonar Barcelona 2023', 'Festival de música avanzada y arte multimedia.', 41.3740, 2.1490, '2023-06-15',
-        NOW() - INTERVAL '420 days', 6, 2),
+        NOW() - INTERVAL '420 days', 6, 2, 9),
        (gen_random_uuid(), 'Concierto Local Pendiente', 'Descripción del concierto local.', 40.0, -3.0, '2025-01-20',
-        NOW() - INTERVAL '10 days', 1, 1)
+        NOW() - INTERVAL '10 days', 1, 1, 11)
 ON CONFLICT (uuid) DO NOTHING;
 
 -- Moment Media
@@ -83,12 +83,6 @@ VALUES ('http://example.com/media/vetusta_madrid_1.jpg', 'IMAGE', 0, NOW() - INT
        ('http://example.com/media/madcool_2023_recap.mp4', 'VIDEO', 0, NOW() - INTERVAL '350 days', 16),
        ('http://example.com/media/sonar_2023_lights.jpg', 'IMAGE', 0, NOW() - INTERVAL '340 days', 17)
 ON CONFLICT DO NOTHING;
-
--- Moment Artists
-INSERT INTO moment_artists (artist_id, moment_id)
-VALUES (1, 1), (2, 2), (3, 3), (4, 5), (5, 6), (6, 8), (7, 9), (8, 10),
-       (1, 4), (3, 4), (9, 14), (10, 14), (4, 15), (1, 15), (11, 16), (2, 16), (12, 17)
-ON CONFLICT (artist_id, moment_id) DO NOTHING;
 
 -- Publications
 INSERT INTO publications (uuid, created_at, moment_id, user_id, status_id)

@@ -41,16 +41,6 @@ CREATE TABLE moment_media (
     FOREIGN KEY (moment_id) REFERENCES moments(id) ON DELETE CASCADE
 );
 
-CREATE TABLE moment_artists (
-    artist_id INTEGER NOT NULL,
-    moment_id BIGINT NOT NULL,
-
-    PRIMARY KEY (artist_id, moment_id),
-
-    FOREIGN KEY (artist_id) REFERENCES artists(id) ON DELETE CASCADE,
-    FOREIGN KEY (moment_id) REFERENCES moments(id) ON DELETE CASCADE
-);
-
 -- Publication related tables
 CREATE TABLE publication_comments (
     id BIGSERIAL PRIMARY KEY,

@@ -8,7 +8,9 @@ import lombok.*;
 
 import java.time.Instant;
 import java.time.LocalDate;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
 
 @Entity
 @Table(name = "moments")
@@ -53,9 +55,9 @@ public class Moment {
     @OrderColumn(name = "position")
     private List<MomentMedia> media;
 
-    @ManyToMany
-    @JoinTable(name = "moment_artists", joinColumns = @JoinColumn(name = "moment_id"), inverseJoinColumns = @JoinColumn(name = "artist_id"))
-    private Set<Artist> artists = new HashSet<>();
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "artist_id")
+    private Artist artist;
 
     @PrePersist
     public void prePersist() {
@@ -67,9 +69,6 @@ public class Moment {
         }
         if (media == null) {
             media = new ArrayList<>();
-        }
-        if (artists == null) {
-            artists = new HashSet<>();
         }
     }
 

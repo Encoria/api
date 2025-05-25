@@ -70,9 +70,11 @@ CREATE TABLE moments (
     deleted_at TIMESTAMPTZ,
     user_id BIGINT NOT NULL,
     status_id INTEGER,
+    artist_id BIGINT,
 
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
-    FOREIGN KEY (status_id) REFERENCES moderation_statuses(id)
+    FOREIGN KEY (status_id) REFERENCES moderation_statuses(id),
+    FOREIGN KEY (artist_id) REFERENCES artists(id)
 );
 
 CREATE TABLE publications (
