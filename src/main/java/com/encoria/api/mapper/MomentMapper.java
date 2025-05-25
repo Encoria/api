@@ -21,6 +21,7 @@ public interface MomentMapper {
     @Mapping(target = "deletedAt", ignore = true)
     @Mapping(target = "user", ignore = true)
     @Mapping(target = "status", ignore = true)
+    @Mapping(target = "artist", ignore = true)
     @Mapping(target = "location", expression = "java(toLocation(momentRequest.latitude(), momentRequest.longitude()))")
     Moment toEntity(MomentRequest momentRequest);
 

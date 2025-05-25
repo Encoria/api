@@ -1,5 +1,6 @@
 package com.encoria.api.dto;
 
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.*;
 
 import java.time.LocalDate;
@@ -31,6 +32,7 @@ public record MomentRequest(
         @Size(max = 10)// STC: provisional limit for demo
         List<MomentMediaDto> media,
 
+        @Valid
         ArtistDto artist
 ) {
 }

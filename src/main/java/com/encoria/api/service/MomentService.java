@@ -30,6 +30,7 @@ public class MomentService {
     private final UserRepository userRepository;
     private final MomentMapper momentMapper;
     private final MomentMediaMapper momentMediaMapper;
+    private final ArtistService artistService;
 
     public List<MomentResponse> getUserMoments(Jwt jwt) {
         Long userId = userRepository.findIdByExternalAuthId(
@@ -50,20 +51,21 @@ public class MomentService {
 
     @Transactional
     public MomentResponse createMoment(Jwt jwt, MomentRequest momentRequest) {
-        User user = userRepository.findByExternalAuthId(
-                jwt.getSubject()).orElseThrow(UserNotFoundException::new);
+        User user = userRepository.findByExternalAuthId(jwt.getSubject())
+                .orElseThrow(UserNotFoundException::new);
 
         Moment moment = momentMapper.toEntity(momentRequest);
         moment.setUser(user);
 
-        if (moment.getMedia() != null) {
-            for (MomentMedia media : moment.getMedia()) {
-                media.setMoment(moment);
-            }
+        if (momentRequest.artist() != null) {
+            moment.setArtist(artistService.getOrCreateArtist(momentRequest.artist()));
         }
 
-        Moment saved = momentRepository.save(moment);
-        return momentMapper.toDto(saved);
+        if (moment.getMedia() != null) {
+            moment.getMedia().forEach(media -> media.setMoment(moment));
+        }
+
+        return momentMapper.toDto(momentRepository.save(moment));
     }
 
     @Transactional
