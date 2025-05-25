@@ -56,7 +56,7 @@ public class UserProfileCheckFilter extends OncePerRequestFilter {
 
         // Check if the user has a profile.
         Jwt jwt = (Jwt) authentication.getPrincipal();
-        if (userRepository.findByExternalAuthId(jwt.getSubject()).isPresent()) {
+        if (userRepository.existsByExternalAuthId(jwt.getSubject())) {
             filterChain.doFilter(request, response);
         } else {
             ErrorResponse error = ErrorResponse.of(
