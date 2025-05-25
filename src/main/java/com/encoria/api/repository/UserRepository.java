@@ -26,9 +26,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     boolean existsByExternalAuthId(String subject);
 
-    @Query("SELECT u.settings.isPrivateProfile FROM User u WHERE u.id = :userId")
-    Boolean isPrivate(@Param("userId") Long userId);
-
     @Query("SELECT new com.encoria.api.dto.UserItemResponse(u.uuid, u.username,u.pictureUrl) " +
             "FROM User u " +
             "WHERE LOWER(u.username) LIKE LOWER(CONCAT('%', :username, '%'))")

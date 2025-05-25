@@ -1,19 +1,10 @@
 package com.encoria.api.service;
 
-import com.encoria.api.dto.UserFollowerResponse;
-import com.encoria.api.dto.UserItemResponse;
-import com.encoria.api.dto.UserProfileRequest;
-import com.encoria.api.dto.UserProfileResponse;
+import com.encoria.api.dto.*;
 import com.encoria.api.exception.*;
 import com.encoria.api.mapper.UserMapper;
-import com.encoria.api.model.users.Country;
-import com.encoria.api.model.users.User;
-import com.encoria.api.model.users.UserFollower;
-import com.encoria.api.model.users.UserFollowerId;
-import com.encoria.api.repository.CountryRepository;
-import com.encoria.api.repository.MomentRepository;
-import com.encoria.api.repository.UserFollowerRepository;
-import com.encoria.api.repository.UserRepository;
+import com.encoria.api.model.users.*;
+import com.encoria.api.repository.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Service;
@@ -30,6 +21,7 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final UserFollowerRepository userFollowerRepository;
+    private final UserSettingsRepository userSettingsRepository;
     private final MomentRepository momentRepository;
     private final CountryRepository countryRepository;
     private final UserMapper userMapper;
@@ -83,7 +75,7 @@ public class UserService {
         User user = userRepository.findById(targetId)
                 .orElseThrow(UserNotFoundException::new);
 
-        Boolean isPrivate = userRepository.isPrivate(targetId);
+        Boolean isPrivate = userSettingsRepository.isPrivateProfileByUserId(targetId);
         if (Boolean.FALSE.equals(isPrivate) || userFollowerRepository.existsByUserIdAndFollowerIdAndApprovedIsTrue(targetId, userId)) {
             return userMapper.toDto(user).withCounts(
                     userFollowerRepository.countByUserId(targetId).orElse(0L),
@@ -120,7 +112,7 @@ public class UserService {
         Long targetId = userRepository.findIdByUuid(targetUuid)
                 .orElseThrow(UserNotFoundException::new);
 
-        if (Boolean.FALSE.equals(userRepository.isPrivate(targetId))) {
+        if (Boolean.FALSE.equals(userSettingsRepository.isPrivateProfileByUserId(targetId))) {
             return targetId;
         }
 
@@ -151,7 +143,7 @@ public class UserService {
                 .id(new UserFollowerId(followedId, followerId))
                 .user(User.builder().id(followedId).build())
                 .follower(User.builder().id(followerId).build())
-                .approved(Boolean.FALSE.equals(userRepository.isPrivate(followedId)))
+                .approved(Boolean.FALSE.equals(userSettingsRepository.isPrivateProfileByUserId(followedId)))
                 .build());
 
         User targetUser = userRepository.findById(followedId)
