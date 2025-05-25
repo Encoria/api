@@ -24,27 +24,34 @@ public class MomentController {
 
     @GetMapping
     public ResponseEntity<List<MomentResponse>> getMoments(@AuthenticationPrincipal Jwt jwt) {
-        return new ResponseEntity<>(momentService.getUserMoments(jwt), HttpStatus.OK);
+        return new ResponseEntity<>(
+                momentService.getUserMoments(jwt),
+                HttpStatus.OK);
     }
 
     @PostMapping
     public ResponseEntity<MomentResponse> createMoment(@AuthenticationPrincipal Jwt jwt,
                                                        @Valid @RequestBody MomentRequest momentRequest) {
-        return new ResponseEntity<>(momentService.createMoment(jwt, momentRequest), HttpStatus.CREATED);
+        return new ResponseEntity<>(
+                momentService.createMoment(jwt, momentRequest),
+                HttpStatus.CREATED);
     }
 
     @DeleteMapping("/{momentUuid}")
     public ResponseEntity<Void> deleteMoment(@AuthenticationPrincipal Jwt jwt,
                                              @PathVariable UUID momentUuid) {
         momentService.deleteMoment(jwt, momentUuid);
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        return new ResponseEntity<>(
+                HttpStatus.NO_CONTENT);
     }
 
     @PutMapping("/{momentUuid}")
     public ResponseEntity<MomentResponse> updateMoment(@AuthenticationPrincipal Jwt jwt,
                                                        @PathVariable UUID momentUuid,
                                                        @Valid @RequestBody MomentRequest momentRequest) {
-        return new ResponseEntity<>(momentService.updateMoment(jwt, momentUuid, momentRequest), HttpStatus.OK);
+        return new ResponseEntity<>(
+                momentService.updateMoment(jwt, momentUuid, momentRequest),
+                HttpStatus.OK);
     }
 
 }

@@ -58,21 +58,9 @@ public class MomentService {
 
     @Transactional
     public void deleteMoment(Jwt jwt, UUID uuid) {
-        Long userId = userRepository.findIdByExternalAuthId(
-                jwt.getSubject()).orElseThrow(UserNotFoundException::new);
-
-        Boolean momentExists = momentRepository.existsByUuid(uuid);
-
-        if (Boolean.FALSE.equals(momentExists)) {
-            throw new MomentNotFoundException("Moment not found with uuid: " + uuid);
+        if (checkMomentOwnership(jwt, uuid)) {
+            momentRepository.deleteByUuid(uuid);
         }
-
-        Boolean userIsOwner = momentRepository.existsByUuidAndUserId(uuid, userId);
-
-        if (Boolean.FALSE.equals(userIsOwner)) {
-            throw new ResourceOwnershipException();
-        }
-        momentRepository.deleteByUuid(uuid);
     }
 
     @Transactional
@@ -105,5 +93,17 @@ public class MomentService {
         return momentMapper.toDto(updatedMoment);
     }
 
+    private boolean checkMomentOwnership(Jwt jwt, UUID uuid) {
+        Long userId = userRepository.findIdByExternalAuthId(
+                jwt.getSubject()).orElseThrow(UserNotFoundException::new);
+
+        Boolean momentExists = momentRepository.existsByUuid(uuid);
+
+        if (Boolean.FALSE.equals(momentExists)) {
+            throw new MomentNotFoundException("Moment not found with uuid: " + uuid);
+        }
+
+        return Boolean.TRUE.equals(momentRepository.existsByUuidAndUserId(uuid, userId));
+    }
 
 }
