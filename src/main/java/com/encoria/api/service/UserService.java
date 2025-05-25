@@ -3,6 +3,7 @@ package com.encoria.api.service;
 import com.encoria.api.dto.*;
 import com.encoria.api.exception.*;
 import com.encoria.api.mapper.UserMapper;
+import com.encoria.api.mapper.UserSettingsMapper;
 import com.encoria.api.model.users.*;
 import com.encoria.api.repository.*;
 import lombok.RequiredArgsConstructor;
@@ -25,6 +26,7 @@ public class UserService {
     private final MomentRepository momentRepository;
     private final CountryRepository countryRepository;
     private final UserMapper userMapper;
+    private final UserSettingsMapper userSettingsMapper;
 
     public boolean userExistsByUsername(String username) {
         return userRepository.existsByUsername(username);
@@ -201,5 +203,22 @@ public class UserService {
 
     public List<UserItemResponse> searchUsers(String query) {
         return userRepository.searchByUsername(query);
+    }
+
+    public UserSettingsResponse getUserSettings(Jwt jwt) {
+        Long userId = userRepository.findIdByExternalAuthId(jwt.getSubject())
+                .orElseThrow(UserNotFoundException::new);
+
+        return userSettingsMapper.toDto(userSettingsRepository.findByUserId(userId)
+                .orElseThrow(UserNotFoundException::new));
+    }
+
+    public UserSettingsResponse updateUserSettings(Jwt jwt, UserSettingsResponse userSettingsResponse) {
+        Long userId = userRepository.findIdByExternalAuthId(jwt.getSubject())
+                .orElseThrow(UserNotFoundException::new);
+
+        UserSettings updatedSettings = userSettingsRepository.save(userSettingsMapper.toEntity(userId, userSettingsResponse));
+
+        return userSettingsMapper.toDto(updatedSettings);
     }
 }

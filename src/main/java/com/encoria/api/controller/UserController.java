@@ -1,9 +1,6 @@
 package com.encoria.api.controller;
 
-import com.encoria.api.dto.UserFollowerResponse;
-import com.encoria.api.dto.UserItemResponse;
-import com.encoria.api.dto.UserProfileRequest;
-import com.encoria.api.dto.UserProfileResponse;
+import com.encoria.api.dto.*;
 import com.encoria.api.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -110,6 +107,21 @@ public class UserController {
     public ResponseEntity<List<UserItemResponse>> searchUsersByUsername(@RequestParam String username) {
         return new ResponseEntity<>(
                 userService.searchUsers(username),
+                HttpStatus.OK);
+    }
+
+    @GetMapping("/settings")
+    public ResponseEntity<UserSettingsResponse> getUserSettings(@AuthenticationPrincipal Jwt jwt) {
+        return new ResponseEntity<>(
+                userService.getUserSettings(jwt),
+                HttpStatus.OK);
+    }
+
+    @PutMapping("/settings")
+    public ResponseEntity<UserSettingsResponse> updateUserSettings(@AuthenticationPrincipal Jwt jwt,
+                                                                   @RequestBody UserSettingsResponse userSettingsResponse) {
+        return new ResponseEntity<>(
+                userService.updateUserSettings(jwt, userSettingsResponse),
                 HttpStatus.OK);
     }
 }
