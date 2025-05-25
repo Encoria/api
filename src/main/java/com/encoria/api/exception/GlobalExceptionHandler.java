@@ -1,10 +1,13 @@
 package com.encoria.api.exception;
 
+import com.fasterxml.jackson.databind.exc.InvalidFormatException;
+import com.fasterxml.jackson.databind.exc.MismatchedInputException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -54,6 +57,27 @@ public class GlobalExceptionHandler {
                 "Request constraint violation",
                 request.getRequestURI(),
                 errors);
+    }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    public ErrorResponse handleJsonParseError(HttpMessageNotReadableException ex, HttpServletRequest request) {
+        Throwable cause = ex.getCause();
+        String conciseMessage;
+
+        if (cause instanceof InvalidFormatException invalidFormatEx) {
+            conciseMessage = invalidFormatEx.getOriginalMessage();
+        } else if (cause instanceof MismatchedInputException mismatchedInputEx) {
+            conciseMessage = mismatchedInputEx.getOriginalMessage();
+        } else {
+            conciseMessage = ex.getMessage();
+        }
+
+        return ErrorResponse.of(
+                HttpStatus.BAD_REQUEST,
+                "Malformed or invalid JSON: " + conciseMessage,
+                request.getRequestURI()
+        );
     }
 
     @ResponseStatus(HttpStatus.FORBIDDEN)
