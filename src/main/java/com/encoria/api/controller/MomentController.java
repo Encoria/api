@@ -1,6 +1,7 @@
 package com.encoria.api.controller;
 
 
+import com.encoria.api.dto.MomentPinResponse;
 import com.encoria.api.dto.MomentRequest;
 import com.encoria.api.dto.MomentResponse;
 import com.encoria.api.service.MomentService;
@@ -29,6 +30,14 @@ public class MomentController {
                 HttpStatus.OK);
     }
 
+    @GetMapping("/{momentUuid}")
+    public ResponseEntity<MomentResponse> getMoment(@AuthenticationPrincipal Jwt jwt,
+                                                    @PathVariable UUID momentUuid) {
+        return new ResponseEntity<>(
+                momentService.getMoment(jwt, momentUuid),
+                HttpStatus.OK);
+    }
+
     @PostMapping
     public ResponseEntity<MomentResponse> createMoment(@AuthenticationPrincipal Jwt jwt,
                                                        @Valid @RequestBody MomentRequest momentRequest) {
@@ -54,4 +63,14 @@ public class MomentController {
                 HttpStatus.OK);
     }
 
+    @GetMapping("/within-bounds")
+    public ResponseEntity<List<MomentPinResponse>> getMomentsWithinBounds(@AuthenticationPrincipal Jwt jwt,
+                                                                          @RequestParam Float latNE,
+                                                                          @RequestParam Float lonNE,
+                                                                          @RequestParam Float latSW,
+                                                                          @RequestParam Float lonSW) {
+        return new ResponseEntity<>(
+                momentService.getMomentsWithinBounds(jwt, latNE, lonNE, latSW, lonSW),
+                HttpStatus.OK);
+    }
 }

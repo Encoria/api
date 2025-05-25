@@ -1,5 +1,6 @@
 package com.encoria.api.service;
 
+import com.encoria.api.dto.MomentPinResponse;
 import com.encoria.api.dto.MomentRequest;
 import com.encoria.api.dto.MomentResponse;
 import com.encoria.api.exception.MomentNotFoundException;
@@ -36,6 +37,15 @@ public class MomentService {
 
         return momentRepository.findAllByUserIdOrderByCreatedAt(userId).stream()
                 .map(momentMapper::toDto).toList();
+    }
+
+    @Transactional
+    public MomentResponse getMoment(Jwt jwt, UUID uuid) {
+        if (!checkMomentOwnership(jwt, uuid)) {
+            throw new ResourceOwnershipException();
+        }
+        return momentMapper.toDto(momentRepository.findByUuid(uuid)
+                .orElseThrow(() -> new MomentNotFoundException("Moment not found with uuid: " + uuid)));
     }
 
     @Transactional
@@ -91,6 +101,15 @@ public class MomentService {
 
         Moment updatedMoment = momentRepository.save(existingMoment);
         return momentMapper.toDto(updatedMoment);
+    }
+
+    @Transactional
+    public List<MomentPinResponse> getMomentsWithinBounds(Jwt jwt,
+                                                          Float latNE, Float lonNE,
+                                                          Float latSW, Float lonSW) {
+        Long userId = userRepository.findIdByExternalAuthId(
+                jwt.getSubject()).orElseThrow(UserNotFoundException::new);
+        return momentRepository.findAllByUserIdWithinBounds(userId, latNE, lonNE, latSW, lonSW);
     }
 
     private boolean checkMomentOwnership(Jwt jwt, UUID uuid) {
