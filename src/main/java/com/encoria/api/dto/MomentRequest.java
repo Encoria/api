@@ -12,7 +12,8 @@ public record MomentRequest(
         @Pattern(regexp = "^\\P{C}+$", message = "title cannot contain strange characters")
         String title,
 
-        @Pattern(regexp = "^\\P{C}+$", message = "description cannot contain strange characters")
+        @Pattern(regexp = "^[\\P{C}\n\r]+$", message = "description cannot contain strange characters")
+        @Size(max = 250)
         String description,
 
         @NotNull
