@@ -1,10 +1,18 @@
 package com.encoria.api.service;
 
-import com.encoria.api.dto.*;
-import com.encoria.api.exception.*;
+import com.encoria.api.dto.UserItemResponse;
+import com.encoria.api.dto.UserProfileRequest;
+import com.encoria.api.dto.UserProfileResponse;
+import com.encoria.api.dto.UserSettingsResponse;
+import com.encoria.api.exception.CountryNotFoundException;
+import com.encoria.api.exception.UserNotFoundException;
+import com.encoria.api.exception.UserProfileAlreadyExistsException;
+import com.encoria.api.exception.UsernameAlreadyExistsException;
 import com.encoria.api.mapper.UserMapper;
 import com.encoria.api.mapper.UserSettingsMapper;
-import com.encoria.api.model.users.*;
+import com.encoria.api.model.users.Country;
+import com.encoria.api.model.users.User;
+import com.encoria.api.model.users.UserSettings;
 import com.encoria.api.repository.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.oauth2.jwt.Jwt;
@@ -67,6 +75,7 @@ public class UserService {
                 momentRepository.countByUserId(user.getId()).orElse(0L));
     }
 
+    @Transactional
     public UserProfileResponse getUserProfile(Jwt jwt, UUID targetUuid) {
         Long userId = userRepository.findIdByExternalAuthId(jwt.getSubject())
                 .orElseThrow(UserNotFoundException::new);
@@ -88,123 +97,11 @@ public class UserService {
         }
     }
 
-    @Transactional
-    public List<UserFollowerResponse> getFollowers(Jwt jwt, UUID targetUuid) {
-        Long userId = userRepository.findIdByExternalAuthId(jwt.getSubject())
-                .orElseThrow(UserNotFoundException::new);
-
-        if (targetUuid == null) return userFollowerRepository.findByUserId(userId);
-
-        Long targetId = checkTargetUser(targetUuid, userId);
-        return userFollowerRepository.findByUserId(targetId);
-    }
-
-    @Transactional
-    public List<UserFollowerResponse> getFollowing(Jwt jwt, UUID targetUuid) {
-        Long userId = userRepository.findIdByExternalAuthId(jwt.getSubject())
-                .orElseThrow(UserNotFoundException::new);
-
-        if (targetUuid == null) return userFollowerRepository.findByFollowerId(userId);
-
-        Long targetId = checkTargetUser(targetUuid, userId);
-        return userFollowerRepository.findByFollowerId(targetId);
-    }
-
-    private Long checkTargetUser(UUID targetUuid, Long userId) {
-        Long targetId = userRepository.findIdByUuid(targetUuid)
-                .orElseThrow(UserNotFoundException::new);
-
-        if (Boolean.FALSE.equals(userSettingsRepository.isPrivateProfileByUserId(targetId))) {
-            return targetId;
-        }
-
-        if (userFollowerRepository.existsByUserIdAndFollowerIdAndApprovedIsTrue(targetId, userId)) {
-            return targetId;
-        } else {
-            throw new PrivateProfileException();
-        }
-    }
-
-    @Transactional
-    public UserFollowerResponse followUser(Jwt jwt, UUID targetUuid) {
-        Long followerId = userRepository.findIdByExternalAuthId(jwt.getSubject())
-                .orElseThrow(UserNotFoundException::new);
-
-        Long followedId = userRepository.findIdByUuid(targetUuid)
-                .orElseThrow(UserNotFoundException::new);
-
-        if (followerId.equals(followedId)) {
-            throw new FollowSelfException();
-        }
-
-        if (userFollowerRepository.existsByUserIdAndFollowerId(followedId, followerId)) {
-            throw new UserAlreadyFollowedException();
-        }
-
-        UserFollower userFollower = userFollowerRepository.save(UserFollower.builder()
-                .id(new UserFollowerId(followedId, followerId))
-                .user(User.builder().id(followedId).build())
-                .follower(User.builder().id(followerId).build())
-                .approved(Boolean.FALSE.equals(userSettingsRepository.isPrivateProfileByUserId(followedId)))
-                .build());
-
-        User targetUser = userRepository.findById(followedId)
-                .orElseThrow(UserNotFoundException::new);
-
-        return new UserFollowerResponse(
-                targetUser.getUuid(),
-                targetUser.getUsername(),
-                targetUser.getPictureUrl(),
-                userFollower.getFollowsSince(),
-                userFollower.getApproved()
-        );
-    }
-
-    @Transactional
-    public void unfollowUser(Jwt jwt, UUID targetUuid) {
-        Long followerId = userRepository.findIdByExternalAuthId(jwt.getSubject())
-                .orElseThrow(UserNotFoundException::new);
-
-        Long userId = userRepository.findIdByUuid(targetUuid)
-                .orElseThrow(UserNotFoundException::new);
-
-        userFollowerRepository.deleteById(new UserFollowerId(userId, followerId));
-    }
-
-    @Transactional
-    public UserFollowerResponse approveFollow(Jwt jwt, UUID followerUuid) {
-        Long userId = userRepository.findIdByExternalAuthId(jwt.getSubject())
-                .orElseThrow(UserNotFoundException::new);
-
-        Long followerId = userRepository.findIdByUuid(followerUuid)
-                .orElseThrow(UserNotFoundException::new);
-
-        UserFollower followRequest = userFollowerRepository.findById(new UserFollowerId(userId, followerId))
-                .orElseThrow(() -> new UserNotFoundException("No request to approve."));
-
-        if (Boolean.TRUE.equals(followRequest.getApproved())) {
-            throw new UserAlreadyFollowedException("This follow request has already been approved");
-        }
-
-        followRequest.setApproved(true);
-        userFollowerRepository.save(followRequest);
-
-        User follower = userRepository.findById(followerId)
-                .orElseThrow(UserNotFoundException::new);
-
-        return new UserFollowerResponse(
-                follower.getUuid(),
-                follower.getUsername(),
-                follower.getPictureUrl(),
-                followRequest.getFollowsSince(),
-                true
-        );
-    }
-
     public List<UserItemResponse> searchUsers(String query) {
         return userRepository.searchByUsername(query);
     }
 
+    @Transactional
     public UserSettingsResponse getUserSettings(Jwt jwt) {
         Long userId = userRepository.findIdByExternalAuthId(jwt.getSubject())
                 .orElseThrow(UserNotFoundException::new);
@@ -213,6 +110,7 @@ public class UserService {
                 .orElseThrow(UserNotFoundException::new));
     }
 
+    @Transactional
     public UserSettingsResponse updateUserSettings(Jwt jwt, UserSettingsResponse userSettingsResponse) {
         Long userId = userRepository.findIdByExternalAuthId(jwt.getSubject())
                 .orElseThrow(UserNotFoundException::new);

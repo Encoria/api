@@ -8,5 +8,7 @@ public record UserFollowerResponse(
         String username,
         String pictureUrl,
         Instant followsSince,
-        Boolean approved) {
+        Boolean approved,
+        Boolean isFollowed,
+        Boolean isFollower) {
 }
