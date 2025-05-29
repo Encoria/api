@@ -1,5 +1,6 @@
 package com.encoria.api.repository;
 
+import com.encoria.api.dto.MomentListResponse;
 import com.encoria.api.dto.MomentPinResponse;
 import com.encoria.api.model.moments.Moment;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -12,7 +13,13 @@ import java.util.UUID;
 
 @Repository
 public interface MomentRepository extends JpaRepository<Moment, Long> {
-    List<Moment> findAllByUserIdOrderByCreatedAt(Long userId);
+
+    @Query("SELECT new com.encoria.api.dto.MomentListResponse(" +
+            "m.uuid, m.title, m.location.latitude, m.location.longitude, CONCAT('', mm.mediaUrl)) " +
+            "FROM Moment m LEFT JOIN MomentMedia mm ON mm.moment.id = m.id AND mm.position = 0 " +
+            "WHERE m.user.id = :userId " +
+            "ORDER BY m.createdAt")
+    List<MomentListResponse> findAllByUserIdOrderByCreatedAt(Long userId);
 
     Optional<Moment> findByUuid(UUID uuid);
 

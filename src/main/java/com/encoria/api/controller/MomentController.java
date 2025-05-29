@@ -1,6 +1,7 @@
 package com.encoria.api.controller;
 
 
+import com.encoria.api.dto.MomentListResponse;
 import com.encoria.api.dto.MomentPinResponse;
 import com.encoria.api.dto.MomentRequest;
 import com.encoria.api.dto.MomentResponse;
@@ -24,7 +25,7 @@ public class MomentController {
     private final MomentService momentService;
 
     @GetMapping
-    public ResponseEntity<List<MomentResponse>> getMoments(@AuthenticationPrincipal Jwt jwt) {
+    public ResponseEntity<List<MomentListResponse>> getMoments(@AuthenticationPrincipal Jwt jwt) {
         return new ResponseEntity<>(
                 momentService.getUserMoments(jwt),
                 HttpStatus.OK);

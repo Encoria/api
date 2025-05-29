@@ -1,5 +1,6 @@
 package com.encoria.api.service;
 
+import com.encoria.api.dto.MomentListResponse;
 import com.encoria.api.dto.MomentPinResponse;
 import com.encoria.api.dto.MomentRequest;
 import com.encoria.api.dto.MomentResponse;
@@ -32,12 +33,11 @@ public class MomentService {
     private final MomentMediaMapper momentMediaMapper;
     private final ArtistService artistService;
 
-    public List<MomentResponse> getUserMoments(Jwt jwt) {
+    public List<MomentListResponse> getUserMoments(Jwt jwt) {
         Long userId = userRepository.findIdByExternalAuthId(
                 jwt.getSubject()).orElseThrow(UserNotFoundException::new);
 
-        return momentRepository.findAllByUserIdOrderByCreatedAt(userId).stream()
-                .map(momentMapper::toDto).toList();
+        return momentRepository.findAllByUserIdOrderByCreatedAt(userId);
     }
 
     @Transactional
