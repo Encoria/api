@@ -1,5 +1,6 @@
 package com.encoria.api.mapper;
 
+import com.encoria.api.dto.UserItemResponse;
 import com.encoria.api.dto.UserProfileRequest;
 import com.encoria.api.dto.UserProfileResponse;
 import com.encoria.api.model.users.User;
@@ -28,4 +29,6 @@ public interface UserMapper {
     @Mapping(target = "externalAuthId", expression = "java(jwt.getSubject())")
     @Mapping(target = "email", expression = "java(jwt.getClaimAsString(\"email\"))")
     User toEntity(UserProfileRequest dto, Jwt jwt);
+
+    UserItemResponse toItemDto(User user);
 }
