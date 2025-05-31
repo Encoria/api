@@ -1,6 +1,7 @@
 package com.encoria.api.service;
 
 import com.encoria.api.dto.PublicationCommentResponse;
+import com.encoria.api.dto.PublicationItemResponse;
 import com.encoria.api.dto.PublicationResponse;
 import com.encoria.api.dto.UserItemResponse;
 import com.encoria.api.exception.*;
@@ -21,27 +22,43 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class PublicationService {
 
-    private final PublicationMapper publicationMapper;
-    private final UserMapper userMapper;
-    private final PublicationCommentMapper publicationCommentMapper;
     private final PublicationRepository publicationRepository;
     private final PublicationCommentRepository publicationCommentRepository;
     private final PublicationLikeRepository publicationLikeRepository;
     private final UserRepository userRepository;
+    private final UserSettingsRepository userSettingsRepository;
+    private final UserFollowerRepository userFollowerRepository;
     private final MomentRepository momentRepository;
+    private final PublicationMapper publicationMapper;
+    private final PublicationCommentMapper publicationCommentMapper;
+    private final UserMapper userMapper;
 
     @Transactional
-    public List<PublicationResponse> getPublicationsFeed(Jwt jwt){
+    public List<PublicationResponse> getPublicationsFeed(Jwt jwt) {
         Long currentUserId = userRepository.findIdByExternalAuthId(
                 jwt.getSubject()).orElseThrow(UserNotFoundException::new);
 
 
         return publicationRepository.findAllByFollowerId(currentUserId)
                 .stream().map(publication -> publicationMapper.toDto(publication).withCounts(
-                      publicationCommentRepository.countByPublicationUuid(publication.getUuid()).orElseThrow(PublicationNotFoundException::new),
+                        publicationCommentRepository.countByPublicationUuid(publication.getUuid()).orElseThrow(PublicationNotFoundException::new),
                         publicationLikeRepository.countByPublicationUuid(publication.getUuid()).orElseThrow(PublicationNotFoundException::new)
                 ))
                 .toList();
+    }
+
+    @Transactional
+    public List<PublicationItemResponse> getPublicationsByUser(Jwt jwt, UUID userUuid) {
+        Long currentUserId = userRepository.findIdByExternalAuthId(
+                jwt.getSubject()).orElseThrow(UserNotFoundException::new);
+        Long targetUserId = userRepository.findIdByUuid(userUuid)
+                .orElseThrow(UserNotFoundException::new);
+
+        if (userSettingsRepository.isPrivateProfileByUserId(targetUserId) && !userFollowerRepository.existsByUserIdAndFollowerIdAndApprovedIsTrue(targetUserId, currentUserId)) {
+            throw new PrivateProfileException();
+        }
+
+        return publicationRepository.findAllByUserIdOrderByCreatedAt(targetUserId);
     }
 
     @Transactional

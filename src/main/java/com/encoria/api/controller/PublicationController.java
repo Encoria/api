@@ -1,6 +1,7 @@
 package com.encoria.api.controller;
 
 import com.encoria.api.dto.PublicationCommentResponse;
+import com.encoria.api.dto.PublicationItemResponse;
 import com.encoria.api.dto.PublicationResponse;
 import com.encoria.api.dto.UserItemResponse;
 import com.encoria.api.service.PublicationService;
@@ -24,6 +25,14 @@ public class PublicationController {
     public ResponseEntity<List<PublicationResponse>> getPublicationsFeed(@AuthenticationPrincipal Jwt jwt){
         return new ResponseEntity<>(
                 publicationService.getPublicationsFeed(jwt),
+                HttpStatus.OK);
+    }
+
+    @GetMapping("/by/{userUuid}")
+    public ResponseEntity<List<PublicationItemResponse>> getPublicationsByUser(@AuthenticationPrincipal Jwt jwt,
+                                                                               @PathVariable UUID userUuid){
+        return new ResponseEntity<>(
+                publicationService.getPublicationsByUser(jwt, userUuid),
                 HttpStatus.OK);
     }
 
