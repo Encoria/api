@@ -65,6 +65,16 @@ public class UserFollowerService {
     }
 
     @Transactional
+    public UserFollowerResponse getFollowStatus(Jwt jwt, UUID targetUserUuid) {
+        Long requestingUserId = userRepository.findIdByExternalAuthId(jwt.getSubject())
+                .orElseThrow(UserNotFoundException::new);
+        Long targetUserId = userRepository.findIdByUuid(targetUserUuid)
+                .orElseThrow(UserNotFoundException::new);
+
+        return userFollowerRepository.findUserFollowerRelation(requestingUserId, targetUserId);
+    }
+
+    @Transactional
     public UserFollowerResponse followUser(Jwt jwt, UUID targetUuid) {
         Long followerId = userRepository.findIdByExternalAuthId(jwt.getSubject())
                 .orElseThrow(UserNotFoundException::new);

@@ -47,6 +47,27 @@ public interface UserFollowerRepository extends JpaRepository<UserFollower, User
     List<UserFollowerResponse> findFollowingWithRelationStatus(@Param("followerId") Long followerId,
                                                                @Param("currentUserId") Long currentUserId);
 
+    @Query("SELECT new com.encoria.api.dto.UserFollowerResponse(" +
+            "u.uuid, " +
+            "u.username, " +
+            "u.pictureUrl, " +
+            "(SELECT rel.followsSince FROM UserFollower rel WHERE rel.user.id = :targetUserId AND rel.follower.id = :requestingUserId), " +
+
+            "COALESCE((SELECT uf.approved FROM UserFollower uf WHERE uf.user.id = :targetUserId AND uf.follower.id = :requestingUserId), false), " +
+
+            "CASE WHEN EXISTS (" +
+            "   SELECT 1 FROM UserFollower is_fwd WHERE is_fwd.user.id = :targetUserId AND is_fwd.follower.id = :requestingUserId) " +
+            "THEN true ELSE false END, " +
+
+            "CASE WHEN EXISTS (" +
+            "   SELECT 1 FROM UserFollower is_fer WHERE is_fer.user.id = :requestingUserId AND is_fer.follower.id = :targetUserId) " +
+            "THEN true ELSE false END) " +
+
+            "FROM User u " +
+            "WHERE u.id = :targetUserId")
+    UserFollowerResponse findUserFollowerRelation(@Param("requestingUserId") Long requestingUserId,
+                                                  @Param("targetUserId") Long targetUserId);
+
     boolean existsByUserIdAndFollowerIdAndApprovedIsTrue(Long userId, Long followerId);
 
     boolean existsByUserIdAndFollowerId(Long userId, Long followerId);

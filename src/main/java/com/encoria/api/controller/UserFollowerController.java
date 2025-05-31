@@ -33,6 +33,13 @@ public class UserFollowerController {
                 HttpStatus.OK);
     }
 
+    @GetMapping("/follow-status/{targetUuid}")
+    public ResponseEntity<UserFollowerResponse> getFollowStatus(@AuthenticationPrincipal Jwt jwt, @PathVariable UUID targetUuid) {
+        return new ResponseEntity<>(
+                userFollowerService.getFollowStatus(jwt, targetUuid),
+                HttpStatus.OK);
+    }
+
     @PostMapping("/following/{targetUuid}")
     public ResponseEntity<UserFollowerResponse> followUser(@AuthenticationPrincipal Jwt jwt,
                                                            @PathVariable UUID targetUuid) {
