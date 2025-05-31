@@ -1,9 +1,6 @@
 package com.encoria.api.controller;
 
-import com.encoria.api.dto.PublicationCommentResponse;
-import com.encoria.api.dto.PublicationItemResponse;
-import com.encoria.api.dto.PublicationResponse;
-import com.encoria.api.dto.UserItemResponse;
+import com.encoria.api.dto.*;
 import com.encoria.api.service.PublicationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -25,6 +22,14 @@ public class PublicationController {
     public ResponseEntity<List<PublicationResponse>> getPublicationsFeed(@AuthenticationPrincipal Jwt jwt){
         return new ResponseEntity<>(
                 publicationService.getPublicationsFeed(jwt),
+                HttpStatus.OK);
+    }
+
+    @GetMapping("/{publicationUuid}")
+    public ResponseEntity<PublicationResponse> getPublication(@AuthenticationPrincipal Jwt jwt,
+                                                              @PathVariable UUID publicationUuid) {
+        return new ResponseEntity<>(
+                publicationService.getPublication(jwt, publicationUuid),
                 HttpStatus.OK);
     }
 

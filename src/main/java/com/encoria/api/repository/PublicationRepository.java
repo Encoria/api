@@ -23,7 +23,7 @@ public interface PublicationRepository extends JpaRepository<Publication, Long> 
             "ORDER BY p.createdAt DESC")
     List<PublicationItemResponse> findAllByUserIdOrderByCreatedAt(Long userId);
 
-    boolean existsByUuid(UUID uuid);
+    Optional<Publication> findByUuid(UUID uuid);
 
     boolean existsByUserIdAndUuid(Long userId, UUID uuid);
 

@@ -1,9 +1,6 @@
 package com.encoria.api.service;
 
-import com.encoria.api.dto.PublicationCommentResponse;
-import com.encoria.api.dto.PublicationItemResponse;
-import com.encoria.api.dto.PublicationResponse;
-import com.encoria.api.dto.UserItemResponse;
+import com.encoria.api.dto.*;
 import com.encoria.api.exception.*;
 import com.encoria.api.mapper.PublicationCommentMapper;
 import com.encoria.api.mapper.PublicationMapper;
@@ -59,6 +56,23 @@ public class PublicationService {
         }
 
         return publicationRepository.findAllByUserIdOrderByCreatedAt(targetUserId);
+    }
+
+    @Transactional
+    public PublicationResponse getPublication(Jwt jwt, UUID publicationUuid) {
+        Long currentUserId = userRepository.findIdByExternalAuthId(
+                jwt.getSubject()).orElseThrow(UserNotFoundException::new);
+        Long targetUserId = publicationRepository.getPublicationOwnerByUuid(publicationUuid)
+                .orElseThrow(PublicationNotFoundException::new);
+
+        if (userSettingsRepository.isPrivateProfileByUserId(targetUserId)
+                && !userFollowerRepository.existsByUserIdAndFollowerIdAndApprovedIsTrue(targetUserId, currentUserId)) {
+            throw new PrivateProfileException();
+        }
+
+        return publicationMapper.toDto(
+                publicationRepository.findByUuid(publicationUuid)
+                        .orElseThrow(PublicationNotFoundException::new));
     }
 
     @Transactional
