@@ -7,6 +7,7 @@ public record MomentListResponse(
         String title,
         Float latitude,
         Float longitude,
-        String mediaUrl
+        String mediaUrl,
+        String mediaType
 ) {
 }

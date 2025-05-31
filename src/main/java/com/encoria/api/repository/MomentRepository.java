@@ -15,7 +15,7 @@ import java.util.UUID;
 public interface MomentRepository extends JpaRepository<Moment, Long> {
 
     @Query("SELECT new com.encoria.api.dto.MomentListResponse(" +
-            "m.uuid, m.title, m.location.latitude, m.location.longitude, CONCAT('', mm.mediaUrl)) " +
+            "m.uuid, m.title, m.location.latitude, m.location.longitude, CONCAT('', mm.mediaUrl), CONCAT('', mm.mediaType)) " +
             "FROM Moment m LEFT JOIN MomentMedia mm ON mm.moment.id = m.id AND mm.position = 0 " +
             "WHERE m.user.id = :userId " +
             "ORDER BY m.createdAt")
