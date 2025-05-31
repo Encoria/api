@@ -7,12 +7,11 @@ import org.springframework.data.jpa.repository.Query;
 import java.util.List;
 import java.util.UUID;
 
-public interface PublicationRepository extends JpaRepository<Publication,Long> {
+public interface PublicationRepository extends JpaRepository<Publication, Long> {
 
     @Query("SELECT p FROM Publication p " +
-            "WHERE p.user.id IN (" +
-            "(SELECT uf.user.id FROM UserFollower uf WHERE uf.follower.id = :currentUserId), :currentUserId) " +
-            "ORDER BY p.createdAt")
+            "WHERE p.user.id = :currentUserId OR p.user.id IN ((SELECT uf.user.id FROM UserFollower uf WHERE uf.follower.id = :currentUserId))" +
+            "ORDER BY p.createdAt DESC")
     List<Publication> findAllByFollowerId(Long currentUserId);
 
     boolean existsByUuid(UUID uuid);
