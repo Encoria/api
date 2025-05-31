@@ -3,10 +3,7 @@ package com.encoria.api.service;
 import com.encoria.api.dto.PublicationCommentResponse;
 import com.encoria.api.dto.PublicationResponse;
 import com.encoria.api.dto.UserItemResponse;
-import com.encoria.api.exception.MomentNotFoundException;
-import com.encoria.api.exception.PublicationNotFoundException;
-import com.encoria.api.exception.ResourceOwnershipException;
-import com.encoria.api.exception.UserNotFoundException;
+import com.encoria.api.exception.*;
 import com.encoria.api.mapper.PublicationCommentMapper;
 import com.encoria.api.mapper.PublicationMapper;
 import com.encoria.api.mapper.UserMapper;
@@ -48,26 +45,34 @@ public class PublicationService {
     }
 
     @Transactional
-    public List<UserItemResponse> getPublicationLikes(UUID publicationUuid){
+    public List<UserItemResponse> getPublicationLikes(Jwt jwt, UUID publicationUuid) {
+        Long currentUserId = userRepository.findIdByExternalAuthId(
+                jwt.getSubject()).orElseThrow(UserNotFoundException::new);
+        Long targetUserId = publicationRepository.getPublicationOwnerByUuid(publicationUuid)
+                .orElseThrow(PublicationNotFoundException::new);
 
-        if(!publicationRepository.existsByUuid(publicationUuid)){
-            throw new PublicationNotFoundException();
+        if (userSettingsRepository.isPrivateProfileByUserId(targetUserId) && !userFollowerRepository.existsByUserIdAndFollowerIdAndApprovedIsTrue(targetUserId, currentUserId)) {
+            throw new PrivateProfileException();
         }
 
-        return  publicationLikeRepository.findAllByPublicationUuid(publicationUuid)
+        return publicationLikeRepository.findAllByPublicationUuid(publicationUuid)
                 .stream().map(publicationLike ->
                         userMapper.toItemDto(publicationLike.getUser())
                 ).toList();
     }
 
     @Transactional
-    public List<PublicationCommentResponse> getPublicationComments(UUID publicationUuid){
+    public List<PublicationCommentResponse> getPublicationComments(Jwt jwt, UUID publicationUuid) {
+        Long currentUserId = userRepository.findIdByExternalAuthId(
+                jwt.getSubject()).orElseThrow(UserNotFoundException::new);
+        Long targetUserId = publicationRepository.getPublicationOwnerByUuid(publicationUuid)
+                .orElseThrow(PublicationNotFoundException::new);
 
-        if(!publicationRepository.existsByUuid(publicationUuid)){
-            throw new PublicationNotFoundException();
+        if (userSettingsRepository.isPrivateProfileByUserId(targetUserId) && !userFollowerRepository.existsByUserIdAndFollowerIdAndApprovedIsTrue(targetUserId, currentUserId)) {
+            throw new PrivateProfileException();
         }
 
-        return  publicationCommentRepository.findAllByPublicationUuid(publicationUuid)
+        return publicationCommentRepository.findAllByPublicationUuid(publicationUuid)
                 .stream().map(publicationCommentMapper::toDto).toList();
     }
 

@@ -28,22 +28,24 @@ public class PublicationController {
     }
 
     @GetMapping("/{publicationUuid}/likes")
-    public ResponseEntity<List<UserItemResponse>> getPublicationLikes(@PathVariable UUID publicationUuid){
+    public ResponseEntity<List<UserItemResponse>> getPublicationLikes(@AuthenticationPrincipal Jwt jwt,
+                                                                      @PathVariable UUID publicationUuid){
         return new ResponseEntity<>(
-                publicationService.getPublicationLikes(publicationUuid),
+                publicationService.getPublicationLikes(jwt, publicationUuid),
                 HttpStatus.OK);
     }
 
     @GetMapping("/{publicationUuid}/comments")
-    public ResponseEntity<List<PublicationCommentResponse>> getPublicationComments(@PathVariable UUID publicationUuid){
+    public ResponseEntity<List<PublicationCommentResponse>> getPublicationComments(@AuthenticationPrincipal Jwt jwt,
+                                                                                   @PathVariable UUID publicationUuid){
         return new ResponseEntity<>(
-                publicationService.getPublicationComments(publicationUuid),
+                publicationService.getPublicationComments(jwt, publicationUuid),
                 HttpStatus.OK);
     }
 
     @PostMapping("/publish/{momentUuid}")
-    public ResponseEntity<PublicationResponse> getPublicationComments(@AuthenticationPrincipal Jwt jwt,
-                                                                      @PathVariable UUID momentUuid) {
+    public ResponseEntity<PublicationResponse> createPublication(@AuthenticationPrincipal Jwt jwt,
+                                                                 @PathVariable UUID momentUuid) {
         return new ResponseEntity<>(
                 publicationService.createPublication(jwt, momentUuid),
                 HttpStatus.OK);
