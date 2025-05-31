@@ -135,4 +135,13 @@ public class PublicationService {
         publicationRepository.deleteByUuid(publicationUuid);
     }
 
+    @Transactional
+    public List<MapMarkerResponse> getPublicationsWithinBounds(Jwt jwt,
+                                                               Float latNE, Float lonNE,
+                                                               Float latSW, Float lonSW) {
+        Long currentUserId = userRepository.findIdByExternalAuthId(
+                jwt.getSubject()).orElseThrow(UserNotFoundException::new);
+        return publicationRepository.findAllByUserIdWithinBounds(currentUserId, latNE, lonNE, latSW, lonSW);
+    }
+
 }

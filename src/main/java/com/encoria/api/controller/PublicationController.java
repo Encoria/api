@@ -72,5 +72,15 @@ public class PublicationController {
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
+    @GetMapping("/within-bounds")
+    public ResponseEntity<List<MapMarkerResponse>> getPublicationsWithinBounds(@AuthenticationPrincipal Jwt jwt,
+                                                                               @RequestParam Float latNE,
+                                                                               @RequestParam Float lonNE,
+                                                                               @RequestParam Float latSW,
+                                                                               @RequestParam Float lonSW) {
+        return new ResponseEntity<>(
+                publicationService.getPublicationsWithinBounds(jwt, latNE, lonNE, latSW, lonSW),
+                HttpStatus.OK);
+    }
 
 }

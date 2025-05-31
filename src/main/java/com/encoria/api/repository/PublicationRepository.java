@@ -1,5 +1,6 @@
 package com.encoria.api.repository;
 
+import com.encoria.api.dto.MapMarkerResponse;
 import com.encoria.api.dto.PublicationItemResponse;
 import com.encoria.api.model.publications.Publication;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -22,6 +23,13 @@ public interface PublicationRepository extends JpaRepository<Publication, Long> 
             "WHERE p.user.id = :userId " +
             "ORDER BY p.createdAt DESC")
     List<PublicationItemResponse> findAllByUserIdOrderByCreatedAt(Long userId);
+
+    @Query("SELECT new com.encoria.api.dto.MapMarkerResponse(p.uuid, p.moment.location.latitude, p.moment.location.longitude) " +
+            "FROM Publication p " +
+            "WHERE p.user.id = :currentUserId OR p.user.id IN ((SELECT uf.user.id FROM UserFollower uf WHERE uf.follower.id = :currentUserId AND uf.approved = true))" +
+            "AND p.moment.location.latitude BETWEEN :minLat AND :maxLat " +
+            "AND p.moment.location.longitude BETWEEN :minLon AND :maxLon")
+    List<MapMarkerResponse> findAllByUserIdWithinBounds(Long currentUserId, Float maxLat, Float maxLon, Float minLat, Float minLon);
 
     Optional<Publication> findByUuid(UUID uuid);
 
