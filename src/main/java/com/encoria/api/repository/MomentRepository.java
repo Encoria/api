@@ -38,4 +38,5 @@ public interface MomentRepository extends JpaRepository<Moment, Long> {
             "AND m.location.longitude BETWEEN :minLon AND :maxLon")
     List<MomentPinResponse> findAllByUserIdWithinBounds(Long userId, Float maxLat, Float maxLon, Float minLat, Float minLon);
 
+    boolean existsByUserIdAndUuid(Long userId, UUID uuid);
 }

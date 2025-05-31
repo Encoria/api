@@ -3,18 +3,19 @@ package com.encoria.api.service;
 import com.encoria.api.dto.PublicationCommentResponse;
 import com.encoria.api.dto.PublicationResponse;
 import com.encoria.api.dto.UserItemResponse;
+import com.encoria.api.exception.MomentNotFoundException;
 import com.encoria.api.exception.PublicationNotFoundException;
+import com.encoria.api.exception.ResourceOwnershipException;
 import com.encoria.api.exception.UserNotFoundException;
 import com.encoria.api.mapper.PublicationCommentMapper;
 import com.encoria.api.mapper.PublicationMapper;
 import com.encoria.api.mapper.UserMapper;
-import com.encoria.api.repository.PublicationCommentRepository;
-import com.encoria.api.repository.PublicationLikeRepository;
-import com.encoria.api.repository.PublicationRepository;
-import com.encoria.api.repository.UserRepository;
+import com.encoria.api.model.publications.Publication;
+import com.encoria.api.repository.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.UUID;
@@ -30,7 +31,9 @@ public class PublicationService {
     private final PublicationCommentRepository publicationCommentRepository;
     private final PublicationLikeRepository publicationLikeRepository;
     private final UserRepository userRepository;
+    private final MomentRepository momentRepository;
 
+    @Transactional
     public List<PublicationResponse> getPublicationsFeed(Jwt jwt){
         Long currentUserId = userRepository.findIdByExternalAuthId(
                 jwt.getSubject()).orElseThrow(UserNotFoundException::new);
@@ -44,6 +47,7 @@ public class PublicationService {
                 .toList();
     }
 
+    @Transactional
     public List<UserItemResponse> getPublicationLikes(UUID publicationUuid){
 
         if(!publicationRepository.existsByUuid(publicationUuid)){
@@ -56,6 +60,7 @@ public class PublicationService {
                 ).toList();
     }
 
+    @Transactional
     public List<PublicationCommentResponse> getPublicationComments(UUID publicationUuid){
 
         if(!publicationRepository.existsByUuid(publicationUuid)){
@@ -65,4 +70,33 @@ public class PublicationService {
         return  publicationCommentRepository.findAllByPublicationUuid(publicationUuid)
                 .stream().map(publicationCommentMapper::toDto).toList();
     }
+
+    @Transactional
+    public PublicationResponse createPublication(Jwt jwt, UUID momentUuid) {
+        Long currentUserId = userRepository.findIdByExternalAuthId(
+                jwt.getSubject()).orElseThrow(UserNotFoundException::new);
+
+        if (!momentRepository.existsByUserIdAndUuid(currentUserId, momentUuid)) {
+            throw new ResourceOwnershipException();
+        }
+
+        return publicationMapper.toDto(
+                publicationRepository.save(Publication.builder()
+                        .moment(momentRepository.findByUuid(momentUuid).orElseThrow(MomentNotFoundException::new))
+                        .user(userRepository.findByExternalAuthId(jwt.getSubject()).orElseThrow(UserNotFoundException::new))
+                        .build()));
+    }
+
+    @Transactional
+    public void deletePublication(Jwt jwt, UUID publicationUuid) {
+        Long currentUserId = userRepository.findIdByExternalAuthId(
+                jwt.getSubject()).orElseThrow(UserNotFoundException::new);
+
+        if (!publicationRepository.existsByUserIdAndUuid(currentUserId, publicationUuid)) {
+            throw new ResourceOwnershipException();
+        }
+
+        publicationRepository.deleteByUuid(publicationUuid);
+    }
+
 }

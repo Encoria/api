@@ -9,10 +9,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.jwt.Jwt;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.UUID;
@@ -43,5 +40,21 @@ public class PublicationController {
                 publicationService.getPublicationComments(publicationUuid),
                 HttpStatus.OK);
     }
+
+    @PostMapping("/publish/{momentUuid}")
+    public ResponseEntity<PublicationResponse> getPublicationComments(@AuthenticationPrincipal Jwt jwt,
+                                                                      @PathVariable UUID momentUuid) {
+        return new ResponseEntity<>(
+                publicationService.createPublication(jwt, momentUuid),
+                HttpStatus.OK);
+    }
+
+    @DeleteMapping("/{publicationUuid}")
+    public ResponseEntity<Void> deletePublication(@AuthenticationPrincipal Jwt jwt,
+                                                  @PathVariable UUID publicationUuid) {
+        publicationService.deletePublication(jwt, publicationUuid);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
 
 }

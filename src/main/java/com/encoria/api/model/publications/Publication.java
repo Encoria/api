@@ -47,6 +47,9 @@ public class Publication {
     @OneToMany(mappedBy = "publication", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<PublicationComment> comments;
 
+    @OneToMany(mappedBy = "publication", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<PublicationLike> likes;
+
     @PrePersist
     public void prePersist() {
         if (uuid == null) {
@@ -57,6 +60,9 @@ public class Publication {
         }
         if (comments == null) {
             comments = new ArrayList<>();
+        }
+        if (likes == null) {
+            likes = new ArrayList<>();
         }
     }
 
