@@ -1,7 +1,7 @@
 package com.encoria.api.repository;
 
 import com.encoria.api.dto.MomentListResponse;
-import com.encoria.api.dto.MomentPinResponse;
+import com.encoria.api.dto.MapMarkerResponse;
 import com.encoria.api.model.moments.Moment;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -31,12 +31,12 @@ public interface MomentRepository extends JpaRepository<Moment, Long> {
 
     void deleteByUuid(UUID uuid);
 
-    @Query("SELECT new com.encoria.api.dto.MomentPinResponse(m.uuid, m.location.latitude, m.location.longitude) " +
+    @Query("SELECT new com.encoria.api.dto.MapMarkerResponse(m.uuid, m.location.latitude, m.location.longitude) " +
             "FROM Moment m " +
             "WHERE m.user.id = :userId " +
             "AND m.location.latitude BETWEEN :minLat AND :maxLat " +
             "AND m.location.longitude BETWEEN :minLon AND :maxLon")
-    List<MomentPinResponse> findAllByUserIdWithinBounds(Long userId, Float maxLat, Float maxLon, Float minLat, Float minLon);
+    List<MapMarkerResponse> findAllByUserIdWithinBounds(Long userId, Float maxLat, Float maxLon, Float minLat, Float minLon);
 
     boolean existsByUserIdAndUuid(Long userId, UUID uuid);
 }

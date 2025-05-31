@@ -1,7 +1,7 @@
 package com.encoria.api.service;
 
 import com.encoria.api.dto.MomentListResponse;
-import com.encoria.api.dto.MomentPinResponse;
+import com.encoria.api.dto.MapMarkerResponse;
 import com.encoria.api.dto.MomentRequest;
 import com.encoria.api.dto.MomentResponse;
 import com.encoria.api.exception.MomentNotFoundException;
@@ -106,7 +106,7 @@ public class MomentService {
     }
 
     @Transactional
-    public List<MomentPinResponse> getMomentsWithinBounds(Jwt jwt,
+    public List<MapMarkerResponse> getMomentsWithinBounds(Jwt jwt,
                                                           Float latNE, Float lonNE,
                                                           Float latSW, Float lonSW) {
         Long userId = userRepository.findIdByExternalAuthId(

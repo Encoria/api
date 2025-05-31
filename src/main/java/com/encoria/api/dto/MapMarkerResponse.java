@@ -2,7 +2,7 @@ package com.encoria.api.dto;
 
 import java.util.UUID;
 
-public record MomentPinResponse(
+public record MapMarkerResponse(
         UUID uuid,
         Float latitude,
         Float longitude) {

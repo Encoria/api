@@ -2,7 +2,7 @@ package com.encoria.api.controller;
 
 
 import com.encoria.api.dto.MomentListResponse;
-import com.encoria.api.dto.MomentPinResponse;
+import com.encoria.api.dto.MapMarkerResponse;
 import com.encoria.api.dto.MomentRequest;
 import com.encoria.api.dto.MomentResponse;
 import com.encoria.api.service.MomentService;
@@ -65,7 +65,7 @@ public class MomentController {
     }
 
     @GetMapping("/within-bounds")
-    public ResponseEntity<List<MomentPinResponse>> getMomentsWithinBounds(@AuthenticationPrincipal Jwt jwt,
+    public ResponseEntity<List<MapMarkerResponse>> getMomentsWithinBounds(@AuthenticationPrincipal Jwt jwt,
                                                                           @RequestParam Float latNE,
                                                                           @RequestParam Float lonNE,
                                                                           @RequestParam Float latSW,
