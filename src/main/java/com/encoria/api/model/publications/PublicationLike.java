@@ -16,14 +16,15 @@ import java.time.Instant;
 public class PublicationLike {
 
     @EmbeddedId
-    private PublicationLikeId id;
+    @Builder.Default
+    private PublicationLikeId id = new PublicationLikeId();
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @MapsId("userId")
     @JoinColumn(name = "user_id")
     private User user;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @MapsId("publicationId")
     @JoinColumn(name = "publication_id")
     private Publication publication;

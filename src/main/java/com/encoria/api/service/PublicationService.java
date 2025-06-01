@@ -95,6 +95,36 @@ public class PublicationService {
     }
 
     @Transactional
+    public UserItemResponse likePublication(Jwt jwt, UUID publicationUuid) {
+        User currentUser = userRepository.findByExternalAuthId(
+                jwt.getSubject()).orElseThrow(UserNotFoundException::new);
+
+        Publication targetPublication = publicationRepository.findByUuid(publicationUuid)
+                .orElseThrow(PublicationNotFoundException::new);
+
+        Long targetOwnerId = targetPublication.getUser().getId();
+        if (userSettingsRepository.isPrivateProfileByUserId(targetOwnerId) &&
+                !userFollowerRepository.existsByUserIdAndFollowerIdAndApprovedIsTrue(targetOwnerId, currentUser.getId())) {
+            throw new PrivateProfileException();
+        }
+
+        PublicationLikeId likeId = new PublicationLikeId(currentUser.getId(), targetPublication.getId());
+
+        if (publicationLikeRepository.existsById(likeId)) {
+            throw new PublicationAlreadyLikedException();
+        }
+
+        PublicationLike newLike = PublicationLike.builder()
+                .user(currentUser)
+                .publication(targetPublication)
+                .build();
+
+        publicationLikeRepository.save(newLike);
+
+        return userMapper.toItemDto(currentUser);
+    }
+
+    @Transactional
     public List<PublicationCommentResponse> getPublicationComments(Jwt jwt, UUID publicationUuid) {
         Long currentUserId = userRepository.findIdByExternalAuthId(
                 jwt.getSubject()).orElseThrow(UserNotFoundException::new);

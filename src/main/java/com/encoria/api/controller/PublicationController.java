@@ -49,6 +49,14 @@ public class PublicationController {
                 HttpStatus.OK);
     }
 
+    @PostMapping("/{publicationUuid}/likes")
+    public ResponseEntity<UserItemResponse> likePublication(@AuthenticationPrincipal Jwt jwt,
+                                                            @PathVariable UUID publicationUuid) {
+        return new ResponseEntity<>(
+                publicationService.likePublication(jwt, publicationUuid),
+                HttpStatus.OK);
+    }
+
     @GetMapping("/{publicationUuid}/comments")
     public ResponseEntity<List<PublicationCommentResponse>> getPublicationComments(@AuthenticationPrincipal Jwt jwt,
                                                                                    @PathVariable UUID publicationUuid){

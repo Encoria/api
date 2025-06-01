@@ -87,7 +87,7 @@ public class GlobalExceptionHandler {
     }
 
     @ResponseStatus(HttpStatus.CONFLICT)
-    @ExceptionHandler({UsernameAlreadyExistsException.class, UserProfileAlreadyExistsException.class, UserAlreadyFollowedException.class, FollowSelfException.class})
+    @ExceptionHandler({UsernameAlreadyExistsException.class, UserProfileAlreadyExistsException.class, UserAlreadyFollowedException.class, FollowSelfException.class, PublicationAlreadyLikedException.class})
     public ErrorResponse handleConflict(RuntimeException ex, HttpServletRequest request) {
         return ErrorResponse.of(HttpStatus.CONFLICT, ex.getMessage(), request.getRequestURI());
     }
