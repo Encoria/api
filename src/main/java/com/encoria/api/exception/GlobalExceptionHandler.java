@@ -93,7 +93,7 @@ public class GlobalExceptionHandler {
     }
 
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    @ExceptionHandler({UserNotFoundException.class, MomentNotFoundException.class, CountryNotFoundException.class, PublicationNotFoundException.class})
+    @ExceptionHandler({UserNotFoundException.class, MomentNotFoundException.class, CountryNotFoundException.class, PublicationNotFoundException.class, CommentNotFoundException.class})
     public ErrorResponse handleNotFound(RuntimeException ex, HttpServletRequest request) {
         return ErrorResponse.of(HttpStatus.NOT_FOUND, ex.getMessage(), request.getRequestURI());
     }

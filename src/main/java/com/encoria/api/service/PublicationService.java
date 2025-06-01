@@ -6,6 +6,7 @@ import com.encoria.api.mapper.PublicationCommentMapper;
 import com.encoria.api.mapper.PublicationMapper;
 import com.encoria.api.mapper.UserMapper;
 import com.encoria.api.model.publications.Publication;
+import com.encoria.api.model.publications.PublicationComment;
 import com.encoria.api.model.publications.PublicationLike;
 import com.encoria.api.model.publications.PublicationLikeId;
 import com.encoria.api.model.users.User;
@@ -106,6 +107,35 @@ public class PublicationService {
         checkPublicationAccess(jwt, publicationUuid);
         return publicationCommentRepository.findAllByPublicationUuid(publicationUuid)
                 .stream().map(publicationCommentMapper::toDto).toList();
+    }
+
+    @Transactional
+    public PublicationCommentResponse commentOnPublication(Jwt jwt, UUID publicationUuid, String content) {
+        checkPublicationAccess(jwt, publicationUuid);
+        User currentUser = userRepository.findByExternalAuthId(
+                jwt.getSubject()).orElseThrow(UserNotFoundException::new);
+
+        Publication targetPublication = publicationRepository.findByUuid(publicationUuid)
+                .orElseThrow(PublicationNotFoundException::new);
+
+        PublicationComment comment = PublicationComment.builder()
+                .user(currentUser)
+                .publication(targetPublication)
+                .content(content)
+                .build();
+        return publicationCommentMapper.toDto(publicationCommentRepository.save(comment));
+    }
+
+    @Transactional
+    public void deleteComment(Jwt jwt, UUID publicationUuid, UUID commentUuid) {
+        PublicationComment comment = publicationCommentRepository.findByUuid(commentUuid)
+                .orElseThrow(CommentNotFoundException::new);
+
+        if (!comment.getPublication().getUuid().equals(publicationUuid) ||
+                !comment.getUser().getExternalAuthId().equals(jwt.getSubject())) {
+            throw new ResourceOwnershipException();
+        }
+        publicationCommentRepository.delete(comment);
     }
 
     @Transactional

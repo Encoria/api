@@ -6,12 +6,15 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 public interface PublicationCommentRepository extends JpaRepository<PublicationComment, Long> {
 
-    @Query ("SELECT pc FROM PublicationComment pc " +
+    @Query("SELECT pc FROM PublicationComment pc " +
             "WHERE pc.publication.uuid = :publicationUuid")
     List<PublicationComment> findAllByPublicationUuid(@Param("publicationUuid") UUID publicationUuid);
+
+    Optional<PublicationComment> findByUuid(UUID uuid);
 
 }
