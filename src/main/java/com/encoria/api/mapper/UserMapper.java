@@ -11,7 +11,7 @@ import org.springframework.security.oauth2.jwt.Jwt;
 @Mapper(componentModel = "spring")
 public interface UserMapper {
 
-    @Mapping(target = "countryCode", expression = "java(user.getCountry() != null ? user.getCountry().getCode() : null)")
+    @Mapping(target = "countryName", expression = "java(user.getCountry() != null ? user.getCountry().getName() : null)")
     @Mapping(target ="approved", constant = "true" )
     UserProfileResponse toDto(User user);
 
@@ -19,7 +19,7 @@ public interface UserMapper {
     @Mapping(target = "firstname", ignore = true)
     @Mapping(target = "lastname", ignore = true)
     @Mapping(target = "birthdate", ignore = true)
-    @Mapping(target = "countryCode", ignore = true)
+    @Mapping(target = "countryName", ignore = true)
     @Mapping(target = "followerCount", ignore = true)
     @Mapping(target = "followingCount", ignore = true)
     @Mapping(target = "momentCount", ignore = true)
