@@ -42,36 +42,18 @@ public class PublicationService {
                 .stream().map(publication ->
                         publicationMapper.toDto(publication)
                                 .withIsLiked(publicationLikeRepository.existsByUserIdAndPublicationId(
-                                        currentUserId, publication.getId())))
-                .toList();
+                                        currentUserId, publication.getId()))).toList();
     }
 
     @Transactional
-    public List<PublicationItemResponse> getPublicationsByUser(Jwt jwt, UUID userUuid) {
-        Long currentUserId = userRepository.findIdByExternalAuthId(
-                jwt.getSubject()).orElseThrow(UserNotFoundException::new);
-        Long targetUserId = userRepository.findIdByUuid(userUuid)
-                .orElseThrow(UserNotFoundException::new);
-
-        if (userSettingsRepository.isPrivateProfileByUserId(targetUserId) && !userFollowerRepository.existsByUserIdAndFollowerIdAndApprovedIsTrue(targetUserId, currentUserId)) {
-            throw new PrivateProfileException();
-        }
-
-        return publicationRepository.findAllByUserIdOrderByCreatedAt(targetUserId);
+    public List<PublicationItemResponse> getPublicationsByUser(Jwt jwt, UUID targetUserUuid) {
+        checkPublicationAccess(jwt, targetUserUuid);
+        return publicationRepository.findAllByUserUuidOrderByCreatedAt(targetUserUuid);
     }
 
     @Transactional
     public PublicationResponse getPublication(Jwt jwt, UUID publicationUuid) {
-        Long currentUserId = userRepository.findIdByExternalAuthId(
-                jwt.getSubject()).orElseThrow(UserNotFoundException::new);
-        Long targetUserId = publicationRepository.getPublicationOwnerByUuid(publicationUuid)
-                .orElseThrow(PublicationNotFoundException::new);
-
-        if (userSettingsRepository.isPrivateProfileByUserId(targetUserId)
-                && !userFollowerRepository.existsByUserIdAndFollowerIdAndApprovedIsTrue(targetUserId, currentUserId)) {
-            throw new PrivateProfileException();
-        }
-
+        checkPublicationAccess(jwt, publicationUuid);
         return publicationMapper.toDto(
                 publicationRepository.findByUuid(publicationUuid)
                         .orElseThrow(PublicationNotFoundException::new));
@@ -79,37 +61,22 @@ public class PublicationService {
 
     @Transactional
     public List<UserItemResponse> getPublicationLikes(Jwt jwt, UUID publicationUuid) {
-        Long currentUserId = userRepository.findIdByExternalAuthId(
-                jwt.getSubject()).orElseThrow(UserNotFoundException::new);
-        Long targetUserId = publicationRepository.getPublicationOwnerByUuid(publicationUuid)
-                .orElseThrow(PublicationNotFoundException::new);
-
-        if (userSettingsRepository.isPrivateProfileByUserId(targetUserId) && !userFollowerRepository.existsByUserIdAndFollowerIdAndApprovedIsTrue(targetUserId, currentUserId)) {
-            throw new PrivateProfileException();
-        }
-
+        checkPublicationAccess(jwt, publicationUuid);
         return publicationLikeRepository.findAllByPublicationUuid(publicationUuid)
                 .stream().map(publicationLike ->
-                        userMapper.toItemDto(publicationLike.getUser())
-                ).toList();
+                        userMapper.toItemDto(publicationLike.getUser())).toList();
     }
 
     @Transactional
     public UserItemResponse likePublication(Jwt jwt, UUID publicationUuid) {
+        checkPublicationAccess(jwt, publicationUuid);
         User currentUser = userRepository.findByExternalAuthId(
                 jwt.getSubject()).orElseThrow(UserNotFoundException::new);
 
         Publication targetPublication = publicationRepository.findByUuid(publicationUuid)
                 .orElseThrow(PublicationNotFoundException::new);
 
-        Long targetOwnerId = targetPublication.getUser().getId();
-        if (userSettingsRepository.isPrivateProfileByUserId(targetOwnerId) &&
-                !userFollowerRepository.existsByUserIdAndFollowerIdAndApprovedIsTrue(targetOwnerId, currentUser.getId())) {
-            throw new PrivateProfileException();
-        }
-
         PublicationLikeId likeId = new PublicationLikeId(currentUser.getId(), targetPublication.getId());
-
         if (publicationLikeRepository.existsById(likeId)) {
             throw new PublicationAlreadyLikedException();
         }
@@ -120,21 +87,12 @@ public class PublicationService {
                 .build();
 
         publicationLikeRepository.save(newLike);
-
         return userMapper.toItemDto(currentUser);
     }
 
     @Transactional
     public List<PublicationCommentResponse> getPublicationComments(Jwt jwt, UUID publicationUuid) {
-        Long currentUserId = userRepository.findIdByExternalAuthId(
-                jwt.getSubject()).orElseThrow(UserNotFoundException::new);
-        Long targetUserId = publicationRepository.getPublicationOwnerByUuid(publicationUuid)
-                .orElseThrow(PublicationNotFoundException::new);
-
-        if (userSettingsRepository.isPrivateProfileByUserId(targetUserId) && !userFollowerRepository.existsByUserIdAndFollowerIdAndApprovedIsTrue(targetUserId, currentUserId)) {
-            throw new PrivateProfileException();
-        }
-
+        checkPublicationAccess(jwt, publicationUuid);
         return publicationCommentRepository.findAllByPublicationUuid(publicationUuid)
                 .stream().map(publicationCommentMapper::toDto).toList();
     }
@@ -176,4 +134,14 @@ public class PublicationService {
         return publicationRepository.findAllByUserIdWithinBounds(currentUserId, latNE, lonNE, latSW, lonSW);
     }
 
+    private void checkPublicationAccess(Jwt jwt, UUID publicationUuid) {
+        Long currentUserId = userRepository.findIdByExternalAuthId(jwt.getSubject())
+                .orElseThrow(UserNotFoundException::new);
+        Long targetUserId = publicationRepository.getPublicationOwnerByUuid(publicationUuid)
+                .orElseThrow(UserNotFoundException::new);
+        if (userSettingsRepository.isPrivateProfileByUserId(targetUserId) &&
+                !userFollowerRepository.existsByUserIdAndFollowerIdAndApprovedIsTrue(targetUserId, currentUserId)) {
+            throw new PrivateProfileException();
+        }
+    }
 }

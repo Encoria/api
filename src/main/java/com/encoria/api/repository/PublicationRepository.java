@@ -20,9 +20,9 @@ public interface PublicationRepository extends JpaRepository<Publication, Long> 
     @Query("SELECT new com.encoria.api.dto.PublicationItemResponse(" +
             "p.uuid, CONCAT('', mm.mediaUrl), CONCAT('', mm.mediaType)) " +
             "FROM Publication p LEFT JOIN MomentMedia mm ON mm.moment.id = p.moment.id AND mm.position = 0 " +
-            "WHERE p.user.id = :userId " +
+            "WHERE p.user.uuid = :targetUserUuid " +
             "ORDER BY p.createdAt DESC")
-    List<PublicationItemResponse> findAllByUserIdOrderByCreatedAt(Long userId);
+    List<PublicationItemResponse> findAllByUserUuidOrderByCreatedAt(UUID targetUserUuid);
 
     @Query("SELECT new com.encoria.api.dto.MapMarkerResponse(p.uuid, p.moment.location.latitude, p.moment.location.longitude) " +
             "FROM Publication p " +
