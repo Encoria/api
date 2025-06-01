@@ -53,7 +53,7 @@ public class PublicationService {
                 .orElseThrow(UserNotFoundException::new);
         Long targetUserId = userRepository.findIdByUuid(targetUserUuid)
                 .orElseThrow(UserNotFoundException::new);
-        if (userSettingsRepository.isPrivateProfileByUserId(targetUserId) &&
+        if (Boolean.TRUE.equals(userSettingsRepository.isPrivateProfileByUserId(targetUserId)) &&
                 !userFollowerRepository.existsByUserIdAndFollowerIdAndApprovedIsTrue(targetUserId, currentUserId)) {
             throw new PrivateProfileException();
         }

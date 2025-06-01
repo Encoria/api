@@ -15,7 +15,7 @@ public class ArtistService {
 
     @Transactional
     public Artist getOrCreateArtist(ArtistDto artistDto) {
-        if (artistDto == null || artistDto.spotifyId() == null) {
+        if (artistDto == null) {
             return null;
         }
 
