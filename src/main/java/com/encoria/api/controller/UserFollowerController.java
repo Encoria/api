@@ -55,7 +55,7 @@ public class UserFollowerController {
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
-    @PostMapping("/following/approve/{followerUuid}")
+    @PostMapping("/followers/pending/approve/{followerUuid}")
     public ResponseEntity<UserFollowerResponse> approveFollow(@AuthenticationPrincipal Jwt jwt,
                                                               @PathVariable UUID followerUuid) {
         return new ResponseEntity<>(

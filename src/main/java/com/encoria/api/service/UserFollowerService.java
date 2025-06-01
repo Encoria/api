@@ -130,7 +130,7 @@ public class UserFollowerService {
         Long followerId = userRepository.findIdByUuid(followerUuid)
                 .orElseThrow(UserNotFoundException::new);
 
-        UserFollower followRequest = userFollowerRepository.findById(new UserFollowerId(userId, followerId))
+        UserFollower followRequest = userFollowerRepository.findByUserIdAndFollowerId(userId, followerId)
                 .orElseThrow(() -> new UserNotFoundException("No request to approve."));
 
         if (Boolean.TRUE.equals(followRequest.getApproved())) {
@@ -149,8 +149,8 @@ public class UserFollowerService {
                 follower.getPictureUrl(),
                 followRequest.getFollowsSince(),
                 true,
-                userFollowerRepository.existsByUserIdAndFollowerId(userId, followerId),  // check if we follow them
-                true  // isFollower - they follow us now
+                userFollowerRepository.existsByUserIdAndFollowerId(userId, followerId),
+                true
         );
     }
 }
