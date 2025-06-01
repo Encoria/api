@@ -6,6 +6,9 @@ import com.encoria.api.mapper.PublicationCommentMapper;
 import com.encoria.api.mapper.PublicationMapper;
 import com.encoria.api.mapper.UserMapper;
 import com.encoria.api.model.publications.Publication;
+import com.encoria.api.model.publications.PublicationLike;
+import com.encoria.api.model.publications.PublicationLikeId;
+import com.encoria.api.model.users.User;
 import com.encoria.api.repository.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.oauth2.jwt.Jwt;
@@ -35,12 +38,11 @@ public class PublicationService {
         Long currentUserId = userRepository.findIdByExternalAuthId(
                 jwt.getSubject()).orElseThrow(UserNotFoundException::new);
 
-
         return publicationRepository.findAllByFollowerId(currentUserId)
-                .stream().map(publication -> publicationMapper.toDto(publication).withCounts(
-                        publicationCommentRepository.countByPublicationUuid(publication.getUuid()).orElseThrow(PublicationNotFoundException::new),
-                        publicationLikeRepository.countByPublicationUuid(publication.getUuid()).orElseThrow(PublicationNotFoundException::new)
-                ))
+                .stream().map(publication ->
+                        publicationMapper.toDto(publication)
+                                .withIsLiked(publicationLikeRepository.existsByUserIdAndPublicationId(
+                                        currentUserId, publication.getId())))
                 .toList();
     }
 

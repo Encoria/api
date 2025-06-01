@@ -17,4 +17,6 @@ public interface PublicationLikeRepository extends JpaRepository<PublicationLike
     @Query("SELECT COUNT(pl) FROM PublicationLike pl " +
             "WHERE pl.publication.uuid = :publicationUuid")
     Optional<Long> countByPublicationUuid(@Param("publicationUuid") UUID publicationUuid);
+    boolean existsByUserIdAndPublicationId(Long userId, Long publicationId);
+
 }

@@ -6,15 +6,17 @@ public record PublicationResponse(
         UUID uuid,
         MomentResponse moment,
         UserItemResponse user,
+        Boolean isLiked,
         Long commentsCount,
         Long likesCount
 ) {
-    public PublicationResponse withCounts(Long commentsCount, Long likesCount) {
+    public PublicationResponse withIsLiked(Boolean isLiked) {
         return new PublicationResponse(
                 this.uuid,
                 this.moment,
                 this.user,
-                commentsCount,
-                likesCount);
+                isLiked,
+                this.commentsCount,
+                this.likesCount);
     }
 }
