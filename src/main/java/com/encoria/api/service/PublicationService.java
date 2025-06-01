@@ -48,7 +48,14 @@ public class PublicationService {
 
     @Transactional
     public List<PublicationItemResponse> getPublicationsByUser(Jwt jwt, UUID targetUserUuid) {
-        checkPublicationAccess(jwt, targetUserUuid);
+        Long currentUserId = userRepository.findIdByExternalAuthId(jwt.getSubject())
+                .orElseThrow(UserNotFoundException::new);
+        Long targetUserId = userRepository.findIdByUuid(targetUserUuid)
+                .orElseThrow(UserNotFoundException::new);
+        if (userSettingsRepository.isPrivateProfileByUserId(targetUserId) &&
+                !userFollowerRepository.existsByUserIdAndFollowerIdAndApprovedIsTrue(targetUserId, currentUserId)) {
+            throw new PrivateProfileException();
+        }
         return publicationRepository.findAllByUserUuidOrderByCreatedAt(targetUserUuid);
     }
 
