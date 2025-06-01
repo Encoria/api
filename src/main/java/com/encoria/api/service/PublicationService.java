@@ -91,6 +91,17 @@ public class PublicationService {
     }
 
     @Transactional
+    public void unlikePublication(Jwt jwt, UUID publicationUuid) {
+        Long currentUserId = userRepository.findIdByExternalAuthId(
+                jwt.getSubject()).orElseThrow(UserNotFoundException::new);
+
+        Long publicationId = publicationRepository.findIdByPublicationUuid(publicationUuid)
+                .orElseThrow(PublicationNotFoundException::new);
+
+        publicationLikeRepository.deleteById(new PublicationLikeId(currentUserId, publicationId));
+    }
+
+    @Transactional
     public List<PublicationCommentResponse> getPublicationComments(Jwt jwt, UUID publicationUuid) {
         checkPublicationAccess(jwt, publicationUuid);
         return publicationCommentRepository.findAllByPublicationUuid(publicationUuid)

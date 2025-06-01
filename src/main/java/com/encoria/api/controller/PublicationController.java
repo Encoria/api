@@ -57,6 +57,13 @@ public class PublicationController {
                 HttpStatus.OK);
     }
 
+    @DeleteMapping("/{publicationUuid}/likes")
+    public ResponseEntity<Void> unlikePublication(@AuthenticationPrincipal Jwt jwt,
+                                                  @PathVariable UUID publicationUuid) {
+        publicationService.unlikePublication(jwt, publicationUuid);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
     @GetMapping("/{publicationUuid}/comments")
     public ResponseEntity<List<PublicationCommentResponse>> getPublicationComments(@AuthenticationPrincipal Jwt jwt,
                                                                                    @PathVariable UUID publicationUuid){

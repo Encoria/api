@@ -33,6 +33,9 @@ public interface PublicationRepository extends JpaRepository<Publication, Long> 
 
     Optional<Publication> findByUuid(UUID uuid);
 
+    @Query("SELECT p.id FROM Publication p WHERE p.uuid = :publicationUuid")
+    Optional<Long> findIdByPublicationUuid(UUID publicationUuid);
+
     boolean existsByUserIdAndUuid(Long userId, UUID uuid);
 
     void deleteByUuid(UUID uuid);
