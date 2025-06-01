@@ -53,6 +53,9 @@ public class UserFollowerService {
         Long targetId = userRepository.findIdByUuid(targetUuid)
                 .orElseThrow(UserNotFoundException::new);
 
+        if (targetId.equals(userId)) {
+            return targetId;
+        }
         if (Boolean.FALSE.equals(userSettingsRepository.isPrivateProfileByUserId(targetId))) {
             return targetId;
         }

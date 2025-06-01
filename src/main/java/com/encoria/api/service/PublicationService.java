@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 
 @Service
@@ -187,8 +188,10 @@ public class PublicationService {
                 .orElseThrow(UserNotFoundException::new);
         Long targetUserId = publicationRepository.getPublicationOwnerByUuid(publicationUuid)
                 .orElseThrow(UserNotFoundException::new);
-        if (userSettingsRepository.isPrivateProfileByUserId(targetUserId) &&
-                !userFollowerRepository.existsByUserIdAndFollowerIdAndApprovedIsTrue(targetUserId, currentUserId)) {
+        if (!Objects.equals(currentUserId, targetUserId)
+                && Boolean.TRUE.equals(userSettingsRepository.isPrivateProfileByUserId(targetUserId))
+                && !userFollowerRepository.existsByUserIdAndFollowerIdAndApprovedIsTrue(targetUserId, currentUserId)
+        ) {
             throw new PrivateProfileException();
         }
     }
