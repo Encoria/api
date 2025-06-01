@@ -69,6 +69,18 @@ public interface UserFollowerRepository extends JpaRepository<UserFollower, User
     UserFollowerResponse findUserFollowerRelation(@Param("requestingUserId") Long requestingUserId,
                                                   @Param("targetUserId") Long targetUserId);
 
+    @Query("SELECT new com.encoria.api.dto.UserFollowerResponse(" +
+            "uf.follower.uuid, uf.follower.username, uf.follower.pictureUrl, uf.followsSince, uf.approved," +
+            "CASE WHEN EXISTS (" +
+            "   SELECT 1 FROM UserFollower is_fwd WHERE is_fwd.user.id = uf.follower.id AND is_fwd.follower.id = :currentUserId) " +
+            "THEN true ELSE false END, " +
+            "CASE WHEN EXISTS (" +
+            "   SELECT 1 FROM UserFollower is_fer WHERE is_fer.user.id = :currentUserId AND is_fer.follower.id = uf.follower.id) " +
+            "THEN true ELSE false END) " +
+            "FROM UserFollower uf " +
+            "WHERE uf.user.id = :currentUserId AND uf.approved = false")
+    List<UserFollowerResponse> findPendingFollowers(@Param("currentUserId") Long currentUserId);
+
     boolean existsByUserIdAndFollowerIdAndApprovedIsTrue(Long userId, Long followerId);
 
     boolean existsByUserIdAndFollowerId(Long userId, Long followerId);

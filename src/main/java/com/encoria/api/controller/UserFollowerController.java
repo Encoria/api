@@ -63,6 +63,13 @@ public class UserFollowerController {
                 HttpStatus.OK);
     }
 
+    @GetMapping("/followers/pending")
+    public ResponseEntity<List<UserFollowerResponse>> getPendingFollowers(@AuthenticationPrincipal Jwt jwt) {
+        return new ResponseEntity<>(
+                userFollowerService.getPendingFollowers(jwt),
+                HttpStatus.OK);
+    }
+
     @GetMapping("/followers/{targetUuid}")
     public ResponseEntity<List<UserFollowerResponse>> getFollowers(@AuthenticationPrincipal Jwt jwt,
                                                                    @PathVariable UUID targetUuid) {

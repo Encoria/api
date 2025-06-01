@@ -153,4 +153,11 @@ public class UserFollowerService {
                 true
         );
     }
+
+    @Transactional
+    public List<UserFollowerResponse> getPendingFollowers(Jwt jwt) {
+        Long userId = userRepository.findIdByExternalAuthId(jwt.getSubject())
+                .orElseThrow(UserNotFoundException::new);
+        return userFollowerRepository.findPendingFollowers(userId);
+    }
 }
