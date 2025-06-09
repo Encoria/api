@@ -17,6 +17,7 @@ public interface UserFollowerRepository extends JpaRepository<UserFollower, User
     @Query("SELECT COUNT(uf.id) FROM UserFollower uf WHERE uf.user.id = :userId AND uf.approved = true")
     Optional<Long> countByUserId(Long userId);
 
+    @Query("SELECT COUNT(uf.id) FROM UserFollower uf WHERE uf.follower.id = :followerId AND uf.approved = true")
     Optional<Long> countByFollowerId(Long followerId);
 
     @Query("SELECT uf FROM UserFollower uf WHERE uf.user.id = :userId AND uf.follower.id = :followerId")
