@@ -64,7 +64,7 @@ ON CONFLICT (uuid) DO NOTHING;
 -- Moment Media
 INSERT INTO moment_media (media_url, media_type, position, created_at, moment_id)
 VALUES  ('https://static.vecteezy.com/system/resources/thumbnails/027/104/127/small_2x/cheering-crowd-illuminated-by-vibrant-stage-lights-at-concert-photo.jpg', 'IMAGE', 0, NOW() - INTERVAL '58 days', 1),
-        ('http://example.com/media/vetusta_madrid_2.mp4', 'VIDEO', 1, NOW() - INTERVAL '57 days', 1),
+        ('https://imagenes.elpais.com/resizer/v2/YKREEW7PUXVQPQ3WAL7A276ZPU.jpg?auth=31417172f1da2f8a50c649658d2933bb28e666886ec38a8e39096b2bd123933c&width=414', 'IMAGE', 1, NOW() - INTERVAL '57 days', 1),
         ('https://www.rollingstone.com/wp-content/uploads/2022/10/Post-Pandemic-and-Beyond-Looking-Ahead-to-the-Future-of-Live-Concerts.jpg', 'IMAGE', 0, NOW() - INTERVAL '68 days', 2),
         ('https://www.shutterstock.com/image-photo/crowd-partying-stage-lights-live-600nw-2297236461.jpg', 'IMAGE', 0, NOW() - INTERVAL '48 days', 3),
         ('https://d117kfg112vbe4.cloudfront.net/public/Royal-Albert-Hall-DAMS/Events/Auditorium/2022/22-05-16-Bonobo/073.jpg?type=image&id=154&token=4ec5257f&mode=fill&top=85&width=1200&height=630&format=webp', 'IMAGE', 0, NOW() - INTERVAL '98 days', 4),
@@ -80,8 +80,9 @@ VALUES  ('https://static.vecteezy.com/system/resources/thumbnails/027/104/127/sm
         ('https://d117kfg112vbe4.cloudfront.net/public/Royal-Albert-Hall-DAMS/Events/Auditorium/2022/22-05-16-Bonobo/073.jpg?type=image&id=154&token=4ec5257f&mode=fill&top=85&width=1200&height=630&format=webp', 'IMAGE', 0, NOW() - INTERVAL '23 days', 13),
         ('https://i.guim.co.uk/img/media/dd2344a2c6897c9751eff292f01810a020d05257/0_339_5568_3341/master/5568.jpg?width=1200&quality=85&auto=format&fit=max&s=b56dc9ca6cc142881261a29af5a15628', 'IMAGE', 0, NOW() - INTERVAL '38 days', 14),
         ('https://static.vecteezy.com/system/resources/thumbnails/027/104/127/small_2x/cheering-crowd-illuminated-by-vibrant-stage-lights-at-concert-photo.jpg', 'IMAGE', 0, NOW() - INTERVAL '88 days', 15),
-        ('http://example.com/media/madcool_2023_recap.mp4', 'VIDEO', 0, NOW() - INTERVAL '350 days', 16),
-        ('https://www.rollingstone.com/wp-content/uploads/2022/10/Post-Pandemic-and-Beyond-Looking-Ahead-to-the-Future-of-Live-Concerts.jpg', 'IMAGE', 0, NOW() - INTERVAL '340 days', 17)
+        ('https://imagenes.elpais.com/resizer/v2/YKREEW7PUXVQPQ3WAL7A276ZPU.jpg?auth=31417172f1da2f8a50c649658d2933bb28e666886ec38a8e39096b2bd123933c&width=414', 'IMAGE', 0, NOW() - INTERVAL '350 days', 16),
+        ('https://www.rollingstone.com/wp-content/uploads/2022/10/Post-Pandemic-and-Beyond-Looking-Ahead-to-the-Future-of-Live-Concerts.jpg', 'IMAGE', 0, NOW() - INTERVAL '340 days', 17),
+        ('https://imagenes.elpais.com/resizer/v2/YKREEW7PUXVQPQ3WAL7A276ZPU.jpg?auth=31417172f1da2f8a50c649658d2933bb28e666886ec38a8e39096b2bd123933c&width=414', 'IMAGE', 0, NOW() - INTERVAL '310 days', 18)
 ON CONFLICT DO NOTHING;
 
 -- Publications
